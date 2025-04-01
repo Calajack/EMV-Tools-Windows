@@ -1,0 +1,13 @@
+void InitOmnikey() {
+    SCardContext* ctx = scard_establish(SCARD_SCOPE_SYSTEM);
+    scard_connect(ctx, "OMNIKEY CardMan 5x21 0", SCARD_SHARE_EXCLUSIVE);
+    scard_omnikey_set_led(ctx, OMNIKEY_LED_GREEN);
+}
+
+
+#ifdef MANUAL_MODE
+void manual_feed_response(const uint8_t *rsp, size_t len) {
+    // Store for next transmit()
+}
+#endif
+

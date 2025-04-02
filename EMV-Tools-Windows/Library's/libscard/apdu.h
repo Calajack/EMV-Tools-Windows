@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+    struct sc;
+
 // APDU command structure
 struct apdu_cmd {
     uint8_t cla;      // Class byte

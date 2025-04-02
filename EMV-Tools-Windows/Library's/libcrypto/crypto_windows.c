@@ -80,37 +80,37 @@ bool emv_rsa_verify(const EMV_RSA_Key *key,
     return result;
 }
 
+// In crypto_windows.c
 void emv_hash_update(ByteBuffer* hash, const unsigned char* data, size_t len)
 {
     if (!hash || !hash->data || !data || !len)
         return;
 
-    // Create a new buffer with combined data
+    // Create new combined buffer
     unsigned char* new_data = malloc(hash->length + len);
     if (!new_data)
         return;
 
-    // Copy existing data and new data
+    // Copy data
     memcpy(new_data, hash->data, hash->length);
     memcpy(new_data + hash->length, data, len);
 
-    // Free old data
-    free(hash->data);
+    // Free old hash data
+    unsigned char* old_data = hash->data;
 
-    // Create new hash of combined data
+    // Create new hash
     ByteBuffer new_hash;
     if (hash->length == SHA_DIGEST_LENGTH) {
-        // SHA-1
         new_hash = emv_sha1_hash(new_data, hash->length + len);
     }
     else {
-        // SHA-256
         new_hash = emv_sha256_hash(new_data, hash->length + len);
     }
 
     free(new_data);
+    free(old_data);
 
-    // Update original hash with new values
+    // Update original hash
     hash->data = new_hash.data;
     hash->length = new_hash.length;
 }

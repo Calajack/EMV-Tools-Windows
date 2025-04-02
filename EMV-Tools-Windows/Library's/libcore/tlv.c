@@ -420,24 +420,21 @@ void tlvdb_dump(const struct tlvdb *tlvdb, FILE *f)
 }
 
 // Get tag name implementation - this would need to be filled with EMV tag names
-const char *tlv_tag_get_name(tlv_tag_t tag)
-{
-    switch (tag) {
-        // Add EMV tag names here - example:
-        case 0x82: return "Application Interchange Profile";
-        case 0x84: return "Dedicated File (DF) Name";
-        case 0x95: return "Terminal Verification Results";
-        // Add more as needed
-        default: return NULL;
-    }
-}
-
+//const char *tlv_tag_get_name(tlv_tag_t tag)
+//{
+ //   switch (tag) {
+//        case 0x82: return "Application Interchange Profile";
+//        case 0x84: return "Dedicated File (DF) Name";
+//        case 0x95: return "Terminal Verification Results";
+//        default: return NULL;
+//    }
+//
 // Get tag description implementation
-const char *tlv_tag_get_description(tlv_tag_t tag)
-{
-    // Similar to tlv_tag_get_name, but with descriptions
-    return NULL;
-}
+//const char *tlv_tag_get_description(tlv_tag_t tag)
+//{
+ //   // Similar to tlv_tag_get_name, but with descriptions
+ //   return NULL;
+//}
 
 struct tlvdb *tlvdb_elm_get_next(struct tlvdb *tlvdb)
 {

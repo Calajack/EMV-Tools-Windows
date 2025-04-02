@@ -1,4 +1,5 @@
-// config.c - Configuration system implementation
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,7 @@
 #define CONFIG_MAX_ENTRIES 128
 #define CONFIG_MAX_KEY_LEN 64
 #define CONFIG_MAX_VALUE_LEN 256
+
 
 static struct {
     char key[CONFIG_MAX_KEY_LEN];

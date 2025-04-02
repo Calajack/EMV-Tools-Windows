@@ -82,15 +82,15 @@ int emv_tag_protect(tlv_t* tlv) {
     {0x9F61, "JCB Secure Code", EMV_TAG_BINARY}, \
     {0x9F62, "JCB Token Indicator", EMV_TAG_NUMERIC}
 
-typedef enum {
-    EMV_TAG_GENERIC,
-    EMV_TAG_BITMASK,
-    EMV_TAG_DOL,
-    EMV_TAG_CVM_LIST,
-    EMV_TAG_STRING,
-    EMV_TAG_NUMERIC,
-    EMV_TAG_YYMMDD,
-} emv_tag_type_t;
+//typedef enum {
+//    EMV_TAG_GENERIC,
+//    EMV_TAG_BITMASK,
+//   EMV_TAG_DOL,
+//    EMV_TAG_CVM_LIST,
+//    EMV_TAG_STRING,
+//   EMV_TAG_NUMERIC,
+//    EMV_TAG_YYMMDD,
+//} emv_tag_type_t;
 
 // Bitmask handling structures
 typedef struct {

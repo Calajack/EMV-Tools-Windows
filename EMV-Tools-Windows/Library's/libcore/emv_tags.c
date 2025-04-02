@@ -101,24 +101,13 @@ typedef struct {
 #define EMV_BIT(byte, bit) ((byte - 1) * 8 + (8 - bit))
 #define BITMASK_TERMINATOR {0xFFFF, NULL}
 
-// Application Interchange Profile (AIP) bits
-static const emv_bitmask_t aip_bits[] = {
-    {EMV_BIT(1, 7), "SDA supported"},
-    {EMV_BIT(1, 6), "DDA supported"},
-    {EMV_BIT(1, 5), "Cardholder verification supported"},
-    {EMV_BIT(1, 4), "Terminal risk management required"},
-    {EMV_BIT(1, 3), "Issuer authentication supported"},
-    {EMV_BIT(1, 1), "CDA supported"},
-    BITMASK_TERMINATOR
-};
-
 static const emv_bitmask_t visa_qual_bits[] = {
     {EMV_BIT(1, 8), "Cashback allowed"},
     {EMV_BIT(1, 7), "Refund allowed"},
     BITMASK_TERMINATOR
 };
 
-{0x9F72, "Visa Transaction Qualifiers", EMV_TAG_BITMASK, visa_qual_bits, false}
+ {0x9F72, "Visa Transaction Qualifiers", EMV_TAG_BITMASK, visa_qual_bits, false}
 
 // Terminal Verification Results (TVR) bits
 static const emv_bitmask_t tvr_bits[] = {
@@ -286,20 +275,6 @@ void emv_tag_secure_free(tlv_t* tlv) {
         free(tlv->value);
     }
 }
-
-static const emv_bitmask_t auc_bits[] = {
-    {EMV_BIT(1, 8), "Valid for domestic cash transactions"},
-    {EMV_BIT(1, 7), "Valid for international cash transactions"},
-    {EMV_BIT(1, 6), "Valid for domestic goods"},
-    {EMV_BIT(1, 5), "Valid for international goods"},
-    {EMV_BIT(1, 4), "Valid for domestic services"},
-    {EMV_BIT(1, 3), "Valid for international services"},
-    {EMV_BIT(1, 2), "Valid at ATMs"},
-    {EMV_BIT(1, 1), "Valid at terminals other than ATMs"},
-    {EMV_BIT(2, 8), "Domestic cashback allowed"},
-    {EMV_BIT(2, 7), "International cashback allowed"},
-    BITMASK_TERMINATOR
-};
 
 int emv_process_cvm_secure(const tlv_t* cvm_tlv, 
                           emv_cvm_callback callback,

@@ -2,8 +2,6 @@
 #ifndef EMV_TLV_H
 #define EMV_TLV_H
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>

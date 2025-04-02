@@ -1,11 +1,17 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "emv_tags.h"
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h> // For SecureZeroMemory
 #include <wincrypt.h>  // For DPAPI
 #include <time.h>      // For struct tm
-
 #include <dpapi.h>
+
+#include <assert.h>
+
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#define CACHE_SIZE 8
 
 #ifdef _DEBUG
 static void validate_tags() {
@@ -17,6 +23,14 @@ static void validate_tags() {
     }
 }
 #endif
+
+const char* tlv_tag_get_name(tlv_tag_t tag) {
+    return emv_tag_get_name(tag);
+}
+
+const char* tlv_tag_get_description(tlv_tag_t tag) {
+    return emv_tag_get_description(tag);
+}
 
 static void build_tag_cache() {
     for(size_t i=0; tag_database[i].tag != 0xFFFF; i++) {
@@ -213,6 +227,11 @@ static const emv_tag_def_t tag_database[] = {
 	{0xbf0c, "File Control Information (FCI) Issuer Discretionary Data" },
     {0xFFFF, NULL, EMV_TAG_GENERIC, NULL}
 };
+
+static struct {
+    tlv_tag_t tag;
+    const struct emv_tag_info_t* info;
+} tag_cache[CACHE_SIZE];
 
 // Complete EMV tag database
 typedef struct {

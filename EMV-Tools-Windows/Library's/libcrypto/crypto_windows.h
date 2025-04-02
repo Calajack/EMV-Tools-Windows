@@ -22,6 +22,8 @@ typedef struct {
     bool is_private;
 } EMV_RSA_Key;
 
+void emv_hash_update(ByteBuffer* hash, const unsigned char* data, size_t len);
+
 // Initialization
 bool emv_crypto_init();
 

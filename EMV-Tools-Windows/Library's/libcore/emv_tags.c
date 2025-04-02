@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #define EMV_AUC 0x9F07
 #define EMV_TVR 0x95
 

@@ -23,8 +23,9 @@ typedef struct {
 } emv_pk_t;
 
 // Certificate recovery
-emv_pk_t* emv_pki_recover_issuer_cert(const emv_pk_t* pk, struct tlvdb* db);
-emv_pk_t* emv_pki_recover_icc_cert(const emv_pk_t* pk, struct tlvdb* db, const tlv_t* sda_tlv);
+struct emv_pk* emv_pki_recover_issuer_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
+struct emv_pk* emv_pki_recover_icc_cert(const struct emv_pk* ca_pk, const struct tlvdb* db, unsigned char* pan, size_t pan_len);
+
 
 // Cryptographic operations
 struct tlvdb* emv_pki_perform_cda(const emv_pk_t* enc_pk, 

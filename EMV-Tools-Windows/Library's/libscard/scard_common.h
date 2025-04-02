@@ -16,7 +16,7 @@ extern "C" {
 #define OMNIKEY_LED_OFF      0x00
 #define OMNIKEY_LED_GREEN    0x01
 
-int scard_omnikey_set_led(SCardContext *ctx, uint8_t state);
+int scard_omnikey_set_led(SCardContext *ctx, unsigned char *state);
 
 // Error codes (Windows-aligned)
 #define SCARD_SUCCESS 0
@@ -43,7 +43,7 @@ typedef struct {
 
 // Manual input structure
 typedef struct {
-    unsigned char atr[32];
+    uint8_t atr[32];
     size_t atr_len;
     uint8_t responses[16][256]; // Queue for manual responses
     size_t resp_lens[16];
@@ -54,7 +54,7 @@ typedef struct {
     SCARDCONTEXT hContext;
     SCARDHANDLE hCard;
     DWORD dwProtocol;
-    unsigned char atr[32];
+    uint8_t atr[32];
     size_t atr_len;
 } SCardContext;
 

@@ -1,14 +1,30 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "emv_tags.h"
+#include "emv_defs.h"
+#include "apdu.h"  // Make sure this can be found
+#include "tlv.h"
+#include "emv_commands.h"
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h> // For SecureZeroMemory
 #include <wincrypt.h>  // For DPAPI
 #include <time.h>      // For struct tm
 #include <dpapi.h>
-
 #include <assert.h>
+
+static int emv_tag_cmp(const void* a, const void* b)
+{
+    const struct emv_tag_info_t* ta = (const struct emv_tag_info_t*)a;
+    const struct emv_tag_info_t* tb = (const struct emv_tag_info_t*)b;
+
+    if (ta->tag < tb->tag)
+        return -1;
+    else if (ta->tag > tb->tag)
+        return 1;
+    else
+        return 0;
+}
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 #define CACHE_SIZE 8

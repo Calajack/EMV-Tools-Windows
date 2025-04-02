@@ -1,4 +1,4 @@
-/ emv_defs.h - Common EMV definitions
+// emv_defs.h - Common EMV definitions
 #ifndef EMV_DEFS_H
 #define EMV_DEFS_H
 
@@ -6,9 +6,17 @@
 #include <stdbool.h>
 #include "tlv.h"
 
+#define EMV_TAG_YYMMDD EMV_TAG_DATE
+#define EMV_TAG_BITMASK 8
+#define EMV_TAG_CVM_LIST 9
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+    typedef void (*emv_cvm_callback)(const struct tlv* cvm_data, void* data);
+    typedef void (*emv_bitmask_callback)(const char* bit, unsigned bit_nr, int val, void* data);
+    typedef void (*emv_dol_callback)(const struct tlv* tlv, void* data);
 
 // Error codes
 #define EMV_ERR_OK                0
@@ -19,15 +27,15 @@ extern "C" {
 #define EMV_OK 0
 #define EMV_ERR_INVALID_FORMAT -5
 
-// Tag type definitions
 typedef enum {
+    EMV_TAG_GENERIC,
     EMV_TAG_STRING,
-    EMV_TAG_BINARY,
     EMV_TAG_NUMERIC,
+    EMV_TAG_BINARY,
     EMV_TAG_BCD,
-    EMV_TAG_DATE,
+    EMV_TAG_DATE,  // YYMMDD 
     EMV_TAG_DOL
-} emv_tag_type_t;
+} emv_tag_format_t;
 
 // CVM (Cardholder Verification Method) definitions
 #define EMV_CVM_HEADER 0x3F
@@ -61,9 +69,6 @@ typedef void (*emv_cvm_callback)(const struct tlv *cvm_data, void *data);
 
 // Define tlv_t as an alias for struct tlv if needed
 typedef struct tlv tlv_t;
-
-int emv_decode_cvm(const unsigned char* ptr, size_t len, emv_cvm_callback cb, void* data);
-void emv_tag_decode_bitmask(const unsigned char* buf, size_t len, const void* bits, emv_bitmask_callback callback, void* data);
 
 #ifdef __cplusplus
 }

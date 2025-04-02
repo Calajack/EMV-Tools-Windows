@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "emv_pki.h"
 #include "emv_pk.h"
 #include "crypto_windows.h"

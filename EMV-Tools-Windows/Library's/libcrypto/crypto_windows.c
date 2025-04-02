@@ -80,40 +80,39 @@ bool emv_rsa_verify(const EMV_RSA_Key *key,
     return result;
 }
 
-// Add to crypto_windows.c
-void emv_hash_update(ByteBuffer *hash, const unsigned char *data, size_t len)
+void emv_hash_update(ByteBuffer* hash, const unsigned char* data, size_t len)
 {
     if (!hash || !hash->data || !data || !len)
         return;
-        
-    // This is a proper crypto hash update, not just buffer concatenation
-    // We need to recreate the hash context, add the original + new data
-    
-    unsigned char *temp_data = malloc(hash->length + len);
-    if (!temp_data)
+
+    // Create a new buffer with combined data
+    unsigned char* new_data = malloc(hash->length + len);
+    if (!new_data)
         return;
-        
-    // Concatenate original hash and new data
-    memcpy(temp_data, hash->data, hash->length);
-    memcpy(temp_data + hash->length, data, len);
-    
-    // Free the old hash data
+
+    // Copy existing data and new data
+    memcpy(new_data, hash->data, hash->length);
+    memcpy(new_data + hash->length, data, len);
+
+    // Free old data
     free(hash->data);
-    
-    // Calculate new hash (determine algorithm by hash length)
+
+    // Create new hash of combined data
+    ByteBuffer new_hash;
     if (hash->length == SHA_DIGEST_LENGTH) {
         // SHA-1
-        ByteBuffer new_hash = emv_sha1_hash(temp_data, hash->length + len);
-        hash->data = new_hash.data;
-        hash->length = new_hash.length;
-    } else {
-        // SHA-256
-        ByteBuffer new_hash = emv_sha256_hash(temp_data, hash->length + len);
-        hash->data = new_hash.data;
-        hash->length = new_hash.length;
+        new_hash = emv_sha1_hash(new_data, hash->length + len);
     }
-    
-    free(temp_data);
+    else {
+        // SHA-256
+        new_hash = emv_sha256_hash(new_data, hash->length + len);
+    }
+
+    free(new_data);
+
+    // Update original hash with new values
+    hash->data = new_hash.data;
+    hash->length = new_hash.length;
 }
 
 void emv_rsa_free_key(EMV_RSA_Key *key) {

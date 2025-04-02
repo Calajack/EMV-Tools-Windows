@@ -43,7 +43,7 @@ typedef struct {
 
 // Manual input structure
 typedef struct {
-    uint8_t atr[32];
+    unsigned char atr[32];
     size_t atr_len;
     uint8_t responses[16][256]; // Queue for manual responses
     size_t resp_lens[16];
@@ -54,7 +54,7 @@ typedef struct {
     SCARDCONTEXT hContext;
     SCARDHANDLE hCard;
     DWORD dwProtocol;
-    uint8_t atr[32];
+    unsigned char atr[32];
     size_t atr_len;
 } SCardContext;
 

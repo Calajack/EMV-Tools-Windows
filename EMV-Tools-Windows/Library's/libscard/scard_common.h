@@ -16,7 +16,7 @@ extern "C" {
 #define OMNIKEY_LED_OFF      0x00
 #define OMNIKEY_LED_GREEN    0x01
 
-int scard_omnikey_set_led(SCardContext *ctx, unsigned char *state);
+    int scard_omnikey_set_led(SCARDCONTEXT* ctx, unsigned char* state);
 
 // Error codes (Windows-aligned)
 #define SCARD_SUCCESS 0

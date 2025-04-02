@@ -24,10 +24,11 @@ struct emv_pk {
     unsigned char pk_algo;
     unsigned char exp[EMV_PK_MAX_EXP_LEN];
     size_t elen;
-    unsigned char *modulus;
+    unsigned char* modulus;
     size_t mlen;
     unsigned char hash[32]; // Supports SHA-256 now
     unsigned char hash_algo;
+    unsigned char pan[10]; // Add this field
 };
 
 struct emv_pk *emv_pk_parse_pk(char *buf);

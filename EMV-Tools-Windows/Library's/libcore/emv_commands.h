@@ -2,6 +2,8 @@
 #ifndef EMV_COMMANDS_H
 #define EMV_COMMANDS_H
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "scard_common.h"
 #include "tlv.h"
 #include <stdbool.h>

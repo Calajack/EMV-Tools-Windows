@@ -1,4 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
+#define EMV_AUC 0x9F07
+#define EMV_TVR 0x95
 
 #include "emv_tags.h"
 #include "emv_defs.h"
@@ -331,9 +333,10 @@ const char* emv_tag_to_string(uint16_t tag) {
     return info ? info->name : "UNKNOWN";
 }
 int emv_process_dol_with_context(const tlv_t* dol, 
-    const tlvdb_t* context,
-    emv_dol_callback cb, 
-    void* userdata);
+    const tlvdb_t * context,
+    emv_dol_callback cb,
+       void* userdata);
+
     
 // Bitmask decoding (Windows-optimized)
 void emv_tag_decode_bitmask(const tlv_t* tlv, emv_bitmask_callback callback, void* userdata) {

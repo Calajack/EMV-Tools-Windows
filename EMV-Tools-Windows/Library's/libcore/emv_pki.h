@@ -1,11 +1,12 @@
-#ifndef EMV_PKI_H
-#define EMV_PKI_H
+#ifndef EMV_PKI_PRIV_H
+#define EMV_PKI_PRIV_H
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "tlv.h"
-#include <openssl/evp.h>
-#include <stdint.h>
+#include "emv_pk.h"
+#include "crypto_windows.h"
+#include "tlv.h"  // Include tlv.h explicitly
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {

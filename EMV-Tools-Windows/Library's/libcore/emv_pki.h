@@ -1,12 +1,13 @@
-#ifndef EMV_PKI_PRIV_H
-#define EMV_PKI_PRIV_H
+#ifndef EMV_PKI_H
+#define EMV_PKI_H
 
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "emv_pk.h"
 #include "crypto_windows.h"
-#include "tlv.h"  // Include tlv.h explicitly
-#include <stdbool.h>
+#include "tlv.h"
+#include <openssl/evp.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,12 +24,13 @@ typedef struct {
 } emv_pk_t;
 
 // Certificate recovery
+// Fix the function declarations in emv_pki.h
 struct emv_pk* emv_pki_recover_issuer_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
 struct emv_pk* emv_pki_recover_icc_cert(const struct emv_pk* ca_pk, const struct tlvdb* db, unsigned char* pan, size_t pan_len);
-
+struct emv_pk* emv_pki_recover_icc_pe_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
 
 // Cryptographic operations
-struct tlvdb* emv_pki_perform_cda(const emv_pk_t* enc_pk, 
+struct emv_pk* emv_pki_perform_cda(const emv_pk_t* enc_pk,
                             const struct tlvdb db,
                             const tlv_t* pdol_data_tlv);
 

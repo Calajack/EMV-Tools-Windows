@@ -1,6 +1,8 @@
 #ifndef EMV_PKI_H
 #define EMV_PKI_H
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "tlv.h"
 #include <openssl/evp.h>
 #include <stdint.h>
@@ -20,12 +22,12 @@ typedef struct {
 } emv_pk_t;
 
 // Certificate recovery
-emv_pk_t* emv_pki_recover_issuer_cert(const emv_pk_t* pk, tlvdb_t* db);
-emv_pk_t* emv_pki_recover_icc_cert(const emv_pk_t* pk, tlvdb_t* db, const tlv_t* sda_tlv);
+emv_pk_t* emv_pki_recover_issuer_cert(const emv_pk_t* pk, struct tlvdb* db);
+emv_pk_t* emv_pki_recover_icc_cert(const emv_pk_t* pk, struct tlvdb* db, const tlv_t* sda_tlv);
 
 // Cryptographic operations
-tlvdb_t* emv_pki_perform_cda(const emv_pk_t* enc_pk, 
-                            const tlvdb_t* db,
+struct tlvdb* emv_pki_perform_cda(const emv_pk_t* enc_pk, 
+                            const struct tlvdb db,
                             const tlv_t* pdol_data_tlv);
 
 // Memory management

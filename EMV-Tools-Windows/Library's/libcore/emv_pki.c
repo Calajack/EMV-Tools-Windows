@@ -289,22 +289,6 @@ static struct emv_pk *emv_pki_recover_icc_pe_cert(const struct emv_pk *pk, const
     return emv_pki_recover_icc_cert(pk, db, pan_tlv->value, pan_tlv->len);
 }
 
-struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *ca_pk, const struct tlvdb *db)
-{
-    return emv_pki_recover_issuer_cert(ca_pk, db);
-}
-
-struct emv_pk *emv_pki_recover_icc_cert(const struct emv_pk *ca_pk, const struct tlvdb *db, 
-                                    unsigned char *pan, size_t pan_len)
-{
-    return emv_pki_recover_icc_cert(ca_pk, db, pan, pan_len);
-}
-
-struct emv_pk *emv_pki_recover_icc_pe_cert(const struct emv_pk *ca_pk, const struct tlvdb *db)
-{
-    return emv_pki_recover_icc_pe_cert(ca_pk, db);
-}
-
 bool emv_pki_verify_sig(const struct emv_pk *pk, const struct tlvdb *db, 
                      tlv_tag_t cert_tag, tlv_tag_t data_tag, tlv_tag_t data_dol_tag)
 {

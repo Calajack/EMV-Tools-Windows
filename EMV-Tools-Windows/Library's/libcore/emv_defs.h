@@ -1,4 +1,4 @@
-// emv_defs.h - Common EMV definitions
+/ emv_defs.h - Common EMV definitions
 #ifndef EMV_DEFS_H
 #define EMV_DEFS_H
 
@@ -16,6 +16,8 @@ extern "C" {
 #define EMV_ERR_DATA_MISSING     -2
 #define EMV_ERR_INVALID_DATA     -3
 #define EMV_ERR_NOT_SUPPORTED    -4
+#define EMV_OK 0
+#define EMV_ERR_INVALID_FORMAT -5
 
 // Tag type definitions
 typedef enum {
@@ -59,6 +61,9 @@ typedef void (*emv_cvm_callback)(const struct tlv *cvm_data, void *data);
 
 // Define tlv_t as an alias for struct tlv if needed
 typedef struct tlv tlv_t;
+
+int emv_decode_cvm(const unsigned char* ptr, size_t len, emv_cvm_callback cb, void* data);
+void emv_tag_decode_bitmask(const unsigned char* buf, size_t len, const void* bits, emv_bitmask_callback callback, void* data);
 
 #ifdef __cplusplus
 }

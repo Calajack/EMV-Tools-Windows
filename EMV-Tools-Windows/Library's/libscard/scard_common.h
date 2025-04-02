@@ -1,6 +1,12 @@
 #pragma once
+#ifndef SCARD_COMMON_H
+#define SCARD_COMMON_H
+#endif
+#include <windows.h>
 #include <winscard.h>
-#include <stdint.h>
+#include <stdint.h>  // For uint8_t, already defined here
+#include <stdbool.h>
+
 
 #ifdef __cplusplus
 extern "C" {

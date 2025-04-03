@@ -1,6 +1,3 @@
-
-#include "emv_pki.h"
-#include "emv_pk.h"
 #include "crypto_windows.h"
 #include "tlv.h"
 #include <stdlib.h>
@@ -288,7 +285,7 @@ static struct emv_pk_t *emv_pki_recover_icc_pe_cert(const struct emv_pk *pk, con
     return emv_pki_recover_icc_cert(pk, db, pan_tlv->value, pan_tlv->len);
 }
 
-bool emv_pki_verify_sig(const struct emv_pk *pk, const struct tlvdb *db, 
+static bool emv_pki_verify_sig(const struct emv_pk *pk, const struct tlvdb *db,
                      tlv_tag_t cert_tag, tlv_tag_t data_tag, tlv_tag_t data_dol_tag)
 {
     const struct tlv *cert_tlv = tlvdb_get(db, cert_tag, NULL);
@@ -362,7 +359,7 @@ bool emv_pki_verify_sig(const struct emv_pk *pk, const struct tlvdb *db,
     return result;
 }
 
-bool emv_pki_aac_verify(const struct emv_pk *icc_pk, const struct tlvdb *db, 
+static bool emv_pki_aac_verify(const struct emv_pk *icc_pk, const struct tlvdb *db,
                      const unsigned char *tdol_data, size_t tdol_data_len, 
                      const unsigned char *crm_data, size_t crm_data_len)
 {
@@ -429,7 +426,7 @@ bool emv_pki_aac_verify(const struct emv_pk *icc_pk, const struct tlvdb *db,
     return true;
 }
 
-struct tlvdb *emv_pki_recover_dac(const struct emv_pk *pk, const struct tlvdb *db, 
+static struct tlvdb *emv_pki_recover_dac(const struct emv_pk *pk, const struct tlvdb *db,
                                const unsigned char *sda_data, size_t sda_data_len)
 {
     const struct tlv *ssad_tlv = tlvdb_get(db, 0x93, NULL);

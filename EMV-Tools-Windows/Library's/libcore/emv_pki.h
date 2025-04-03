@@ -35,9 +35,6 @@ struct emv_pk_t* emv_pki_perform_cda(const emv_pk_t* enc_pk,
                             const struct tlvdb db,
                             const tlv_t* pdol_data_tlv);
 
-
-
-
 // Memory management
 void emv_pk_free(emv_pk_t* pk);
 

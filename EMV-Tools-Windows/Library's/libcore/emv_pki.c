@@ -34,7 +34,7 @@ static struct emv_pk *emv_pki_decode_key(const struct tlvdb *db, tlv_tag_t tag, 
 
 static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db)
 {
-    const struct tlv *issuer_cert_tlv = tlvdb_get(db, 0x90, NULL);
+    const struct tlv *issuer_cert_tlv = tlvdb_get(db, 0x90, 0);
     const struct tlv *issuer_rem_tlv = tlvdb_get(db, 0x92, NULL);
     const struct tlv *issuer_exp_tlv = tlvdb_get(db, 0x9F32, NULL);
     
@@ -55,7 +55,7 @@ static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, con
     
     // Decrypt the certificate
     if (!emv_rsa_verify(&issuer_key, issuer_cert_tlv->value, issuer_cert_tlv->len,
-                       modulus, &modulus_len)) {
+        modulus, modulus_len)) {
         free(modulus);
         emv_rsa_free_key(&issuer_key);
         return NULL;
@@ -105,7 +105,7 @@ static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, con
     if (issuer_rem_tlv && issuer_rem_tlv->len > 0) {
         size_t rem_pos = issuer_data_len - 1;
         if (rem_pos + issuer_rem_tlv->len > issuer_pk->mlen) {
-            emv_pk_free(issuer_pk);
+            emv_pk_free((struct emv_pk*)&issuer_pk);
             free(modulus);
             emv_rsa_free_key(&issuer_key);
             return NULL;
@@ -122,7 +122,7 @@ static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, con
         hash = emv_sha256_hash(issuer_pk->rid, 5);
     
     if (!hash.data) {
-        emv_pk_free(issuer_pk);
+        emv_pk_free((struct emv_pk*)&issuer_pk);
         free(modulus);
         emv_rsa_free_key(&issuer_key);
         return NULL;
@@ -137,7 +137,7 @@ static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, con
     unsigned char *cert_hash = modulus + modulus_len - hash_len - 1;
     if (hash.length != hash_len || memcmp(hash.data, cert_hash, hash_len) != 0) {
         emv_free_buffer(&hash);
-        emv_pk_free(issuer_pk);
+        emv_pk_free((struct emv_pk*)issuer_pk);
         free(modulus);
         emv_rsa_free_key(&issuer_key);
         return NULL;
@@ -173,7 +173,7 @@ static struct emv_pk_t *emv_pki_recover_icc_cert(const struct emv_pk *pk, const 
     
     // Decrypt the certificate
     if (!emv_rsa_verify(&icc_key, icc_cert_tlv->value, icc_cert_tlv->len,
-                      modulus, &modulus_len)) {
+                      modulus, modulus_len)) {
         free(modulus);
         emv_rsa_free_key(&icc_key);
         return NULL;
@@ -311,7 +311,7 @@ bool emv_pki_verify_sig(const struct emv_pk *pk, const struct tlvdb *db,
     
     // Verify the signature
     if (!emv_rsa_verify(&key, cert_tlv->value, cert_tlv->len,
-                      decrypted, &decrypted_len)) {
+                      decrypted, decrypted_len)) {
         free(decrypted);
         emv_rsa_free_key(&key);
         return false;
@@ -388,7 +388,7 @@ bool emv_pki_aac_verify(const struct emv_pk *icc_pk, const struct tlvdb *db,
     }
     
     if (!emv_rsa_verify(&key, crm_data, crm_data_len,
-                      decrypted, &decrypted_len)) {
+                      decrypted, decrypted_len)) {
         free(decrypted);
         emv_rsa_free_key(&key);
         return false;
@@ -508,7 +508,7 @@ struct tlvdb *emv_pki_recover_idn(const struct emv_pk *pk, const struct tlvdb *d
     }
     
     if (!emv_rsa_verify(&key, idn_tlv->value, idn_tlv->len,
-                      decrypted, &decrypted_len)) {
+                      decrypted, decrypted_len)) {
         free(decrypted);
         emv_rsa_free_key(&key);
         return NULL;

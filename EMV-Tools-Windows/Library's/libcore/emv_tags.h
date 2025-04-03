@@ -9,7 +9,7 @@ typedef struct emv_tag_info_t {
     const char* name;
     const char* type;
     const char* description;
-} emv_tag_info_t;
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,9 +39,9 @@ extern "C" {
         const char* description;
         emv_tag_format_t* format; // Using the enum you defined in emv_defs.h
         const uint8_t* bitmask;
-    };
+    }
 
-const emv_tag_info_t* emv_tag_get_info(uint16_t tag);
+    const emv_tag_info_t; *emv_tag_get_info(uint16_t tag);
 int emv_tag_is_constructed(uint16_t tag);
 extern const char* tvr_bits[5][8];
 

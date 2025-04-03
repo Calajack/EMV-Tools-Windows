@@ -1,4 +1,4 @@
-ifndef EMV_PKI_PRIV_H
+#ifndef EMV_PKI_PRIV_H
 #define EMV_PKI_PRIV_H
 
 #include "emv_pk.h"

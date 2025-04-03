@@ -26,14 +26,17 @@ typedef struct {
 
 // Certificate recovery
 // Fix the function declarations in emv_pki.h
-struct emv_pk* emv_pki_recover_issuer_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
-struct emv_pk* emv_pki_recover_icc_cert(const struct emv_pk* ca_pk, const struct tlvdb* db, unsigned char* pan, size_t pan_len);
-struct emv_pk* emv_pki_recover_icc_pe_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
+struct emv_pk_t* emv_pki_recover_issuer_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
+struct emv_pk_t* emv_pki_recover_icc_cert(const struct emv_pk* ca_pk, const struct tlvdb* db, unsigned char* pan, size_t pan_len);
+struct emv_pk_t* emv_pki_recover_icc_pe_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
 
 // Cryptographic operations
-struct emv_pk* emv_pki_perform_cda(const emv_pk_t* enc_pk,
+struct emv_pk_t* emv_pki_perform_cda(const emv_pk_t* enc_pk,
                             const struct tlvdb db,
                             const tlv_t* pdol_data_tlv);
+
+
+
 
 // Memory management
 void emv_pk_free(emv_pk_t* pk);

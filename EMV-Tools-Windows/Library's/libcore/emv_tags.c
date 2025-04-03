@@ -238,12 +238,12 @@ const emv_bitmask_t tvr_bits[] = {
 };
 
 // Complete EMV tag database
-typedef struct {
+typedef struct emv_tag_info {
     uint16_t tag;
     const char* name;
     emv_tag_format_t type;
     const emv_bitmask_t* bitmask;
-};
+} emv_tag_info;
 
 // Binary search helper
 static int compare_tags(const void* a, const void* b) {
@@ -257,7 +257,7 @@ const emv_tag_info_t* emv_tag_get_info(uint16_t tag) {
         sizeof(tag_database)/sizeof(tag_database[0]) - 1,
         sizeof(tag_database[0]), compare_tags);
     
-    static emv_tag_info_t info;
+    static emv_tag_info info;
     if (found) {
         info.tag = found->tag;
         info.name = found->name;
@@ -329,11 +329,11 @@ const char* emv_tag_to_string(uint16_t tag) {
     const emv_tag_info_t* info = emv_tag_get_info(tag);
     return info ? info->name : "UNKNOWN";
 }
-int emv_process_dol_with_context(const tlv_t* dol, 
+int emv_process_dol_with_context(const tlv_t* dol, {
     const tlvdb_t * context,
-    emv_dol_callback cb,
+    emv_dol_callback {} cb,
        void* userdata);
-
+}
     
 // Bitmask decoding (Windows-optimized)
 void emv_tag_decode_bitmask(const tlv_t* tlv, emv_bitmask_callback callback, void* userdata) {

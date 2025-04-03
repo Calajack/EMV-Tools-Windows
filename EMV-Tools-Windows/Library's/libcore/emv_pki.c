@@ -32,7 +32,7 @@ static struct emv_pk *emv_pki_decode_key(const struct tlvdb *db, tlv_tag_t tag, 
     return pk;
 }
 
-static struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db)
+static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db)
 {
     const struct tlv *issuer_cert_tlv = tlvdb_get(db, 0x90, NULL);
     const struct tlv *issuer_rem_tlv = tlvdb_get(db, 0x92, NULL);
@@ -150,7 +150,7 @@ static struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const
     return issuer_pk;
 }
 
-static struct emv_pk *emv_pki_recover_icc_cert(const struct emv_pk *pk, const struct tlvdb *db, 
+static struct emv_pk_t *emv_pki_recover_icc_cert(const struct emv_pk *pk, const struct tlvdb *db, 
                                            unsigned char *pan, size_t pan_len)
 {
     const struct tlv *icc_cert_tlv = tlvdb_get(db, 0x9F46, NULL);
@@ -275,7 +275,7 @@ static struct emv_pk *emv_pki_recover_icc_cert(const struct emv_pk *pk, const st
     return icc_pk;
 }
 
-static struct emv_pk *emv_pki_recover_icc_pe_cert(const struct emv_pk *pk, const struct tlvdb *db)
+static struct emv_pk_t *emv_pki_recover_icc_pe_cert(const struct emv_pk *pk, const struct tlvdb *db)
 {
     const struct tlv *cert_tlv = tlvdb_get(db, 0x9F2D, NULL);
     const struct tlv *exp_tlv = tlvdb_get(db, 0x9F2E, NULL);

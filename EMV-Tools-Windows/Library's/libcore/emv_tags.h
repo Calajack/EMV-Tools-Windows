@@ -43,7 +43,6 @@ typedef struct emv_tag_def_t {
 
 const emv_tag_info_t* emv_tag_get_info(uint16_t tag);
 int emv_tag_is_constructed(uint16_t tag);
-extern const char* tvr_bits[];
 extern const char* tvr_bits[5][8];
 
 #ifdef __cplusplus

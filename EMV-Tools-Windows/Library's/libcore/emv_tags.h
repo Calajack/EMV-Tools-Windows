@@ -2,6 +2,13 @@
 #define EMV_TAGS_H
 
 #include <stdint.h>
+#include "emv_defs.h"
+
+typedef struct emv_tag_info_t {
+    uint16_t tag;
+    const char* name;
+    const char* description;
+} emv_tag_info_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,10 +29,19 @@ typedef struct {
     const char* description;
     size_t min_len;
     size_t max_len;
-} emv_tag_info_t;
+} emv_tag_def_t;
+
+typedef struct {
+    uint16_t tag;
+    const char* name;
+    const char* description;
+    emv_tag_format_t format; // Using the enum you defined in emv_defs.h
+    const uint8_t* bitmask;
+} emv_tag_def_t;
 
 const emv_tag_info_t* emv_tag_get_info(uint16_t tag);
 int emv_tag_is_constructed(uint16_t tag);
+extern const char* tvr_bits[];
 
 #ifdef __cplusplus
 }

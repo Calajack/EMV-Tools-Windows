@@ -1,13 +1,11 @@
 // emv_commands.c - High-level EMV command implementations
 #include "emv_commands.h"
-#include "apdu.h"  // Make sure this can be found
 #include "scard_common.h"
+#include "apdu.h"  // Make sure this can be found
 #include "tlv.h"
 #include "dol.h"
 #include <stdlib.h>
 #include <string.h>
-
-#define _CRT_SECURE_NO_WARNINGS
 
 // Helper for converting APDU response to TLV database
 static struct tlvdb *apdu_to_tlvdb(struct apdu_response *apdu)

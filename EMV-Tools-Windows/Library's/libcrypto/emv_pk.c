@@ -5,6 +5,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <basetsd.h>
+typedef SSIZE_T ssize_t;
+
 #define BCD(c) (((c) >= '0' && (c) <= '9') ? ((c) - '0') : -1)
 #define HEX(c) (((c) >= '0' && (c) <= '9') ? ((c) - '0') : \
                ((c) >= 'A' && (c) <= 'F') ? ((c) - 'A' + 10) : \

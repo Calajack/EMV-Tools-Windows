@@ -22,11 +22,12 @@ extern "C" {
 typedef uint32_t tlv_tag_t;
 
 /* TLV structure */
-struct tlv {
-    tlv_tag_t tag;
-    size_t len;
-    unsigned char *value;
-};
+typedef struct tlv {
+    uint8_t     type;   // Primitive/Constructed (add this)
+    unsigned    tag;    // Existing
+    size_t      len;    // Existing
+    const uint8_t* value;  // Existing
+} tlv_t;
 
 /* TLV database structure */
 struct tlvdb {

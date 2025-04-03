@@ -1,12 +1,3 @@
-// emv_defs.h - Common EMV definitions
-#ifndef EMV_DEFS_H
-#define EMV_DEFS_H
-
-#include <stdint.h>
-#include <stdbool.h>
-#include "tlv.h"
-
-#define EMV_TAG_YYMMDD EMV_TAG_DATE
 #define EMV_TAG_BITMASK 8
 #define EMV_TAG_CVM_LIST 9
 
@@ -34,7 +25,9 @@ typedef enum {
     EMV_TAG_BINARY,
     EMV_TAG_BCD,
     EMV_TAG_DATE,  // YYMMDD 
-    EMV_TAG_DOL
+    EMV_TAG_DOL,
+    EMV_AIP,
+    AIP_BITS,
 } emv_tag_format_t;
 
 // CVM (Cardholder Verification Method) definitions

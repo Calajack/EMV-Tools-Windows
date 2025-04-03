@@ -1,5 +1,6 @@
 #define EMV_AUC 0x9F07
 #define EMV_TVR 0x95
+#define CACHE_SIZE 256
 
 #include "emv_tags.h"
 #include "emv_defs.h"
@@ -121,7 +122,6 @@ static int emv_tag_cmp(const void* a, const void* b)
 }
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-#define CACHE_SIZE 8
 
 #ifdef _DEBUG
 static void validate_tags() {
@@ -350,7 +350,6 @@ void emv_tag_decode_bitmask(const tlv_t* tlv, emv_bitmask_callback callback, voi
         for (int bit = 7; bit >= 0; bit--) {
             uint16_t combined_bit = EMV_BIT(byte + 1, bit + 1);
             const emv_bitmask_t* mask = def->bitmask;
-            
             while (mask->bit != 0xFFFF) {
                 if (mask->bit == combined_bit && (val & (1 << bit))) {
                     if (callback) {

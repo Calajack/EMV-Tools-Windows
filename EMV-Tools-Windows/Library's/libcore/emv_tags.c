@@ -14,6 +14,99 @@
 #include <dpapi.h>
 #include <assert.h>
 
+static const emv_tag_def_t tag_database[] = {
+    // Core EMV tags (partial list - would include all 200+ tags)
+    {0x4F, "Application Identifier", EMV_TAG_BINARY, NULL},
+    {0x50, "Application Label", EMV_TAG_STRING, NULL},
+    {0x56, "Track 1 Data", EMV_TAG_BINARY, NULL},
+    {0x57, "Track 2 Equivalent Data", EMV_TAG_BINARY, NULL},
+    {0x5A, "PAN", EMV_TAG_BINARY, NULL},
+    {0x5F20, "Cardholder Name", EMV_TAG_STRING, NULL},
+    {0x5F24, "Expiration Date", EMV_TAG_YYMMDD, NULL},
+    {0x5f25, "Application Effective Date", EMV_TAG_YYMMDD },
+    {0x5f28, "Issuer Country Code", EMV_TAG_NUMERIC },
+    {0x5f2a, "Transaction Currency Code", EMV_TAG_NUMERIC },
+    {0x5f2d, "Language Preference", EMV_TAG_STRING },
+    {0x5f30, "Service Code", EMV_TAG_NUMERIC },
+    {0x5f34, "Application Primary Account Number (PAN) Sequence Number", EMV_TAG_NUMERIC },
+    {0x61  , "Application Template" },
+    {0x6f  , "File Control Information (FCI) Template" },
+    {0x70  , "READ RECORD Response Message Template" },
+    {0x77  , "Response Message Template Format 2" },
+    {0x80  , "Response Message Template Format 1" },
+    {0x82  , "Application Interchange Profile", EMV_TAG_BITMASK, EMV_AIP, AIP_BITS },
+    {0x83  , "Command Template" },
+    {0x84  , "Dedicated File (DF) Name" },
+    {0x87  , "Application Priority Indicator" },
+    {0x88  , "Short File Identifier (SFI)" },
+    {0x8a  , "Authorisation Response Code" },
+    {0x8c  , "Card Risk Management Data Object List 1 (CDOL1)", EMV_TAG_DOL },
+    {0x8d  , "Card Risk Management Data Object List 2 (CDOL2)", EMV_TAG_DOL },
+    {0x8e  , "Cardholder Verification Method (CVM) List", EMV_TAG_CVM_LIST },
+    {0x8f  , "Certification Authority Public Key Index" },
+    {0x90  , "Issuer Public Key Certificate" },
+    {0x91  , "Issuer Authentication Data" },
+    {0x92  , "Issuer Public Key Remainder" },
+    {0x93  , "Signed Static Application Data" },
+    {0x94  , "Application File Locator (AFL)" },
+    {0x95  , "Terminal Verification Results", EMV_TAG_BITMASK, tvr_bits},
+    {0x9a  , "Transaction Date", EMV_TAG_YYMMDD },
+    {0x9c  , "Transaction Type" },
+    {0x9f02, "Amount, Authorised (Numeric)", EMV_TAG_NUMERIC },
+    {0x9f03, "Amount, Other (Numeric)", EMV_TAG_NUMERIC, },
+    {0x9f07, "Application Usage Control", EMV_TAG_BITMASK,  EMV_AUC },
+    {0x9f08, "Application Version Number" },
+    {0x9f0d, "Issuer Action Code - Default", EMV_TAG_BITMASK, EMV_TVR },
+    {0x9f0e, "Issuer Action Code - Denial", EMV_TAG_BITMASK, EMV_TVR },
+    {0x9f0f, "Issuer Action Code - Online", EMV_TAG_BITMASK, EMV_TVR },
+    {0x9f10, "Issuer Application Data" },
+    {0x9f11, "Issuer Code Table Index", EMV_TAG_NUMERIC },
+    {0x9f12, "Application Preferred Name", EMV_TAG_STRING },
+    {0x9f13, "Last Online Application Transaction Counter (ATC) Register" },
+    {0x9f17, "Personal Identification Number (PIN) Try Counter" },
+    {0x9f1a, "Terminal Country Code" },
+    {0x9f1f, "Track 1 Discretionary Data", EMV_TAG_STRING },
+    {0x9f21, "Transaction Time" },
+    {0x9f26, "Application Cryptogram" },
+    {0x9f27, "Cryptogram Information Data" },
+    {0x9f2d, "ICC PIN Encipherment Public Key Certificate" },
+    {0x9f2e, "ICC PIN Encipherment Public Key Exponent" },
+    {0x9f2f, "ICC PIN Encipherment Public Key Remainder" },
+    {0x9f32, "Issuer Public Key Exponent" },
+    {0x9f34, "Cardholder Verification Method (CVM) Results" },
+    {0x9f35, "Terminal Type" },
+    {0x9f36, "Application Transaction Counter (ATC)" },
+    {0x9f37, "Unpredictable Number" },
+    {0x9f38, "Processing Options Data Object List (PDOL)", EMV_TAG_DOL },
+    {0x9f42, "Application Currency Code", EMV_TAG_NUMERIC },
+    {0x9f44, "Application Currency Exponent", EMV_TAG_NUMERIC },
+    {0x9f45, "Data Authentication Code" },
+    {0x9F46, "ICC Public Key Certificate", EMV_TAG_BINARY },
+    {0x9f47, "ICC Public Key Exponent" },
+    {0x9f48, "ICC Public Key Remainder" },
+    {0x9f49, "Dynamic Data Authentication Data Object List (DDOL)", EMV_TAG_DOL },
+    {0x9f4a, "Static Data Authentication Tag List" },
+    {0x9f4b, "Signed Dynamic Application Data" },
+    {0x9f4c, "ICC Dynamic Number" },
+    {0x9f4d, "Log Entry" },
+    {0x9f4f, "Log Format", EMV_TAG_DOL },
+    {0x9f62, "PCVC3(Track1)" },
+    {0x9f63, "PUNATC(Track1)" },
+    {0x9f64, "NATC(Track1)" },
+    {0x9f65, "PCVC3(Track2)" },
+    {0x9f66, "PUNATC(Track2)" },
+    {0x9f67, "NATC(Track2)" },
+    {0x9f6b, "Track 2 Data" },
+    {0xa5  , "File Control Information (FCI) Proprietary Template" },
+    {0xbf0c, "File Control Information (FCI) Issuer Discretionary Data" },
+    {0xFFFF, NULL, EMV_TAG_GENERIC, NULL}
+};
+
+static struct {
+    tlv_tag_t tag;
+    const struct emv_tag_info_t* info;
+} tag_cache[CACHE_SIZE];
+
 static int emv_tag_cmp(const void* a, const void* b)
 {
     const struct emv_tag_info_t* ta = (const struct emv_tag_info_t*)a;
@@ -49,7 +142,7 @@ const char* tlv_tag_get_description(tlv_tag_t tag) {
     return emv_tag_get_description(tag);
 }
 
-static void build_tag_cache() {
+ static void build_tag_cache() {
     for(size_t i=0; tag_database[i].tag != 0xFFFF; i++) {
         uint32_t hash = _mm_crc32_u16(0, tag_database[i].tag);
         tag_cache[hash % CACHE_SIZE] = &tag_database[i];
@@ -143,102 +236,6 @@ const emv_bitmask_t tvr_bits[] = {
 	{ EMV_BIT(5, 1), "Reserved for use by the EMV Contactless Specifications" },
     BITMASK_TERMINATOR
 };
-
-
-
-static const emv_tag_def_t tag_database[] = {
-    // Core EMV tags (partial list - would include all 200+ tags)
-    {0x4F, "Application Identifier", EMV_TAG_BINARY, NULL}, 
-    {0x50, "Application Label", EMV_TAG_STRING, NULL},
-    {0x56, "Track 1 Data", EMV_TAG_BINARY, NULL},
-    {0x57, "Track 2 Equivalent Data", EMV_TAG_BINARY, NULL},
-    {0x5A, "PAN", EMV_TAG_BINARY, NULL},
-    {0x5F20, "Cardholder Name", EMV_TAG_STRING, NULL},
-    {0x5F24, "Expiration Date", EMV_TAG_YYMMDD, NULL},
-    {0x5f25, "Application Effective Date", EMV_TAG_YYMMDD },
-	{0x5f28, "Issuer Country Code", EMV_TAG_NUMERIC },
-	{0x5f2a, "Transaction Currency Code", EMV_TAG_NUMERIC },
-	{0x5f2d, "Language Preference", EMV_TAG_STRING },
-	{0x5f30, "Service Code", EMV_TAG_NUMERIC },
-	{0x5f34, "Application Primary Account Number (PAN) Sequence Number", EMV_TAG_NUMERIC },
-	{0x61  , "Application Template" },
-	{0x6f  , "File Control Information (FCI) Template" },
-	{0x70  , "READ RECORD Response Message Template" },
-	{0x77  , "Response Message Template Format 2" },
-	{0x80  , "Response Message Template Format 1" },
-	{0x82  , "Application Interchange Profile", EMV_TAG_BITMASK, EMV_AIP, AIP_BITS },
-	{0x83  , "Command Template" },
-	{0x84  , "Dedicated File (DF) Name" },
-	{0x87  , "Application Priority Indicator" },
-	{0x88  , "Short File Identifier (SFI)" },
-	{0x8a  , "Authorisation Response Code" },
-	{0x8c  , "Card Risk Management Data Object List 1 (CDOL1)", EMV_TAG_DOL },
-	{0x8d  , "Card Risk Management Data Object List 2 (CDOL2)", EMV_TAG_DOL },
-	{0x8e  , "Cardholder Verification Method (CVM) List", EMV_TAG_CVM_LIST },
-	{0x8f  , "Certification Authority Public Key Index" },
-	{0x90  , "Issuer Public Key Certificate" },
-	{0x91  , "Issuer Authentication Data" },
-	{0x92  , "Issuer Public Key Remainder" },
-	{0x93  , "Signed Static Application Data" },
-	{0x94  , "Application File Locator (AFL)" },
-	{0x95  , "Terminal Verification Results", EMV_TAG_BITMASK, tvr_bits},
-	{0x9a  , "Transaction Date", EMV_TAG_YYMMDD },
-	{0x9c  , "Transaction Type" },
-	{0x9f02, "Amount, Authorised (Numeric)", EMV_TAG_NUMERIC },
-	{0x9f03, "Amount, Other (Numeric)", EMV_TAG_NUMERIC, },
-	{0x9f07, "Application Usage Control", EMV_TAG_BITMASK,  EMV_AUC },
-	{0x9f08, "Application Version Number" },
-	{0x9f0d, "Issuer Action Code - Default", EMV_TAG_BITMASK, EMV_TVR },
-	{0x9f0e, "Issuer Action Code - Denial", EMV_TAG_BITMASK, EMV_TVR },
-	{0x9f0f, "Issuer Action Code - Online", EMV_TAG_BITMASK, EMV_TVR },
-	{0x9f10, "Issuer Application Data" },
-	{0x9f11, "Issuer Code Table Index", EMV_TAG_NUMERIC },
-	{0x9f12, "Application Preferred Name", EMV_TAG_STRING },
-	{0x9f13, "Last Online Application Transaction Counter (ATC) Register" },
-	{0x9f17, "Personal Identification Number (PIN) Try Counter" },
-	{0x9f1a, "Terminal Country Code" },
-	{0x9f1f, "Track 1 Discretionary Data", EMV_TAG_STRING },
-	{0x9f21, "Transaction Time" },
-	{0x9f26, "Application Cryptogram" },
-	{0x9f27, "Cryptogram Information Data" },
-	{0x9f2d, "ICC PIN Encipherment Public Key Certificate" },
-	{0x9f2e, "ICC PIN Encipherment Public Key Exponent" },
-	{0x9f2f, "ICC PIN Encipherment Public Key Remainder" },
-	{0x9f32, "Issuer Public Key Exponent" },
-	{0x9f34, "Cardholder Verification Method (CVM) Results" },
-	{0x9f35, "Terminal Type" },
-	{0x9f36, "Application Transaction Counter (ATC)" },
-	{0x9f37, "Unpredictable Number" },
-	{0x9f38, "Processing Options Data Object List (PDOL)", EMV_TAG_DOL },
-	{0x9f42, "Application Currency Code", EMV_TAG_NUMERIC },
-	{0x9f44, "Application Currency Exponent", EMV_TAG_NUMERIC },
-	{0x9f45, "Data Authentication Code" },
-	{0x9F46, "ICC Public Key Certificate", EMV_TAG_BINARY },
-	{0x9f47, "ICC Public Key Exponent" },
-	{0x9f48, "ICC Public Key Remainder" },
-	{0x9f49, "Dynamic Data Authentication Data Object List (DDOL)", EMV_TAG_DOL },
-	{0x9f4a, "Static Data Authentication Tag List" },
-	{0x9f4b, "Signed Dynamic Application Data" },
-	{0x9f4c, "ICC Dynamic Number" },
-	{0x9f4d, "Log Entry" },
-	{0x9f4f, "Log Format", EMV_TAG_DOL },
-	{0x9f62, "PCVC3(Track1)" },
-	{0x9f63, "PUNATC(Track1)" },
-	{0x9f64, "NATC(Track1)" },
-	{0x9f65, "PCVC3(Track2)" },
-	{0x9f66, "PUNATC(Track2)" },
-	{0x9f67, "NATC(Track2)" },
-	{0x9f6b, "Track 2 Data" },
-	{0xa5  , "File Control Information (FCI) Proprietary Template" },
-	{0xbf0c, "File Control Information (FCI) Issuer Discretionary Data" },
-    {0x9F72, "Visa Transaction Qualifiers", EMV_TAG_BITMASK, visa_qual_bits, false }
-    {0xFFFF, NULL, EMV_TAG_GENERIC, NULL}
-};
-
-static struct {
-    tlv_tag_t tag;
-    const struct emv_tag_info_t* info;
-} tag_cache[CACHE_SIZE];
 
 // Complete EMV tag database
 typedef struct {
@@ -379,7 +376,7 @@ static void emv_tag_format_bitmask(const tlv_t* tlv, FILE* out) {
     }, out);
 }
 // Date parsing (YYMMDD format)
-int emv_tag_parse_date(const tlv_t* tlv, struct tm* date) {
+static int emv_tag_parse_date(const tlv_t* tlv, struct tm* date) {
     if (!tlv || tlv->type != EMV_TAG_DATE || tlv->len != 3) 
         return EMV_ERR_INVALID_FORMAT;
     
@@ -391,7 +388,7 @@ int emv_tag_parse_date(const tlv_t* tlv, struct tm* date) {
 }
 
 // DOL parsing (Data Object List)
-int emv_tag_parse_dol(const tlv_t* dol, emv_dol_callback callback, void* userdata) {
+static int emv_tag_parse_dol(const tlv_t* dol, emv_dol_callback callback, void* userdata) {
     if (!dol || dol->type != EMV_TAG_DOL) 
         return EMV_ERR_INVALID_PARAM;
     

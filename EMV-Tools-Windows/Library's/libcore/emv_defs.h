@@ -1,3 +1,13 @@
+// emv_defs.h - Common EMV definitions
+#ifndef EMV_DEFS_H
+#define EMV_DEFS_H
+
+#include <stdint.h>
+#include <stdbool.h>
+#include "tlv.h"
+#include <openssl/types.h>
+
+#define EMV_TAG_YYMMDD EMV_TAG_DATE
 #define EMV_TAG_BITMASK 8
 #define EMV_TAG_CVM_LIST 9
 

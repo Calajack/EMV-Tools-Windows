@@ -59,7 +59,7 @@ typedef struct {
 
 extern const auc_bit_t auc_bits[];
 
-// Structure for TVR (Terminal Verification Results) bits
+ // Structure for TVR (Terminal Verification Results) bits
 typedef struct {
     const char *name;
     const char *description;

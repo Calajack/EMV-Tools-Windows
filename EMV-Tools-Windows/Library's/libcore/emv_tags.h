@@ -45,6 +45,8 @@ extern "C" {
 int emv_tag_is_constructed(uint16_t tag);
 extern const char* tvr_bits[5][8];
 
+extern const struct emv_tag_def tag_database[];
+
 #ifdef __cplusplus
 }
 #endif

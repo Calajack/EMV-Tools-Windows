@@ -40,6 +40,11 @@ typedef enum {
     AIP_BITS,
 } emv_tag_format_t;
 
+typedef enum {
+    TLV_PRIMITIVE = 0,
+    TLV_CONSTRUCTED = 1
+} tlv_type_t;
+
 // CVM (Cardholder Verification Method) definitions
 #define EMV_CVM_HEADER 0x3F
 

@@ -149,7 +149,7 @@ const char* tlv_tag_get_description(tlv_tag_t tag) {
     }
 }
 
-int emv_tag_protect(tlv_t* tlv) {
+ static int emv_tag_protect(tlv_t* tlv) {
     DATA_BLOB in = {tlv->len, tlv->value};
     DATA_BLOB out;
     
@@ -268,14 +268,14 @@ const emv_tag_info_t* emv_tag_get_info(uint16_t tag) {
 }
 
 // Secure memory clearing for sensitive data
-void emv_tag_secure_free(tlv_t* tlv) {
+static void emv_tag_secure_free(tlv_t* tlv) {
     if (tlv && tlv->value) {
         SecureZeroMemory(tlv->value, tlv->len);
         free(tlv->value);
     }
 }
 
-int emv_process_cvm_secure(const tlv_t* cvm_tlv, 
+static int emv_process_cvm_secure(const tlv_t* cvm_tlv,
                           emv_cvm_callback callback,
                           void* userdata,
                           CRITICAL_SECTION* lock) {
@@ -289,7 +289,7 @@ int emv_process_cvm_secure(const tlv_t* cvm_tlv,
 }
 
 // Aligned memory allocation for tags
-tlv_t* emv_tag_create_aligned(size_t len) {
+static tlv_t* emv_tag_create_aligned(size_t len) {
     void* ptr = _aligned_malloc(len, 8); // 8-byte alignment
     if (!ptr) return NULL;
     
@@ -298,7 +298,7 @@ tlv_t* emv_tag_create_aligned(size_t len) {
     return tlv;
 }
 
-int emv_decode_cvm(const tlv_t* cvm_tlv, emv_cvm_callback callback, void* userdata) {
+static int emv_decode_cvm(const tlv_t* cvm_tlv, emv_cvm_callback callback, void* userdata) {
     if (!cvm_tlv || cvm_tlv->len < 8 || (cvm_tlv->len % 2) != 0) 
         return EMV_ERR_INVALID_FORMAT;
 
@@ -325,7 +325,7 @@ int emv_decode_cvm(const tlv_t* cvm_tlv, emv_cvm_callback callback, void* userda
 
     return EMV_OK;
 }
-const char* emv_tag_to_string(uint16_t tag) {
+static const char* emv_tag_to_string(uint16_t tag) {
     const emv_tag_info_t* info = emv_tag_get_info(tag);
     return info ? info->name : "UNKNOWN";
 }
@@ -336,7 +336,7 @@ int emv_process_dol_with_context(const tlv_t* dol, {
 }
     
 // Bitmask decoding (Windows-optimized)
-void emv_tag_decode_bitmask(const tlv_t* tlv, emv_bitmask_callback callback, void* userdata) {
+static void emv_tag_decode_bitmask(const tlv_t* tlv, emv_bitmask_callback callback, void* userdata) {
     if (!tlv || tlv->type != EMV_TAG_BITMASK) return;
     
     const emv_tag_def_t* def = bsearch(&tlv->tag, tag_database, 

@@ -108,10 +108,8 @@ static const emv_bitmask_t visa_qual_bits[] = {
     BITMASK_TERMINATOR
 };
 
- {0x9F72, "Visa Transaction Qualifiers", EMV_TAG_BITMASK, visa_qual_bits, false}
-
 // Terminal Verification Results (TVR) bits
-static const emv_bitmask_t tvr_bits[] = {
+const emv_bitmask_t tvr_bits[] = {
     {EMV_BIT(1, 8), "Offline data authentication not performed"},
     {EMV_BIT(1, 7), "SDA failed"},
     { EMV_BIT(1, 6), "ICC data missing" },
@@ -145,6 +143,8 @@ static const emv_bitmask_t tvr_bits[] = {
 	{ EMV_BIT(5, 1), "Reserved for use by the EMV Contactless Specifications" },
     BITMASK_TERMINATOR
 };
+
+
 
 static const emv_tag_def_t tag_database[] = {
     // Core EMV tags (partial list - would include all 200+ tags)
@@ -231,6 +231,7 @@ static const emv_tag_def_t tag_database[] = {
 	{0x9f6b, "Track 2 Data" },
 	{0xa5  , "File Control Information (FCI) Proprietary Template" },
 	{0xbf0c, "File Control Information (FCI) Issuer Discretionary Data" },
+    {0x9F72, "Visa Transaction Qualifiers", EMV_TAG_BITMASK, visa_qual_bits, false }
     {0xFFFF, NULL, EMV_TAG_GENERIC, NULL}
 };
 
@@ -243,7 +244,7 @@ static struct {
 typedef struct {
     uint16_t tag;
     const char* name;
-    emv_tag_type_t type;
+    emv_tag_format_t type;
     const emv_bitmask_t* bitmask;
 } emv_tag_def_t;
 
@@ -371,7 +372,7 @@ static const char* bitstrings[] = {
     "...1....", "..1.....", ".1......", "1......."
 };
 
-void emv_tag_format_bitmask(const tlv_t* tlv, FILE* out) {
+static void emv_tag_format_bitmask(const tlv_t* tlv, FILE* out) {
     emv_tag_decode_bitmask(tlv, [](void* f, uint16_t bit, const char* name) {
         fprintf((FILE*)f, "\t%s - %s\n", bitstrings[bit % 8], name);
         return true;

@@ -1,8 +1,6 @@
 #ifndef EMV_PKI_H
 #define EMV_PKI_H
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #include "emv_pk.h"
 #include "crypto_windows.h"
 #include "tlv.h"

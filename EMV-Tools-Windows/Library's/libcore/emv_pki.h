@@ -2,6 +2,8 @@
 #define EMV_PKI_H
 
 #include "emv_pk.h"
+#include "emv_tags.h"
+#include "emv_defs.h"
 #include "crypto_windows.h"
 #include "tlv.h"
 #include <openssl/evp.h>
@@ -10,6 +12,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 // EMV Public Key Structure (Windows-optimized)
 typedef struct {

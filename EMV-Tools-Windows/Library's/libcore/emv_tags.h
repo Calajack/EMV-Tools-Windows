@@ -24,22 +24,22 @@ extern "C" {
 #define EMV_TAG_DDOL           0x9F49   // Dynamic Data Authentication Data Object List 
 
 // Tag information structure
-typedef struct {
-    uint16_t tag;
-    const char* name;
-    const char* description;
-    size_t min_len;
-    size_t max_len;
-};
+    typedef struct {
+        uint16_t tag;
+        const char* name;
+        const char* description;
+        size_t min_len;
+        size_t max_len;
+    };
 
-typedef struct emv_tag_def_t {
-    uint16_t tag;
-    const char* name;
-    const char* type;
-    const char* description;
-    emv_tag_format_t* format; // Using the enum you defined in emv_defs.h
-    const uint8_t* bitmask; 
-}  emv_tag_def_t;
+    typedef struct emv_tag_def_t {
+        uint16_t tag;
+        const char* name;
+        const char* type;
+        const char* description;
+        emv_tag_format_t* format; // Using the enum you defined in emv_defs.h
+        const uint8_t* bitmask;
+    };
 
 const emv_tag_info_t* emv_tag_get_info(uint16_t tag);
 int emv_tag_is_constructed(uint16_t tag);

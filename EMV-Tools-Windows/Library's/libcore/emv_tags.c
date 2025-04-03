@@ -148,7 +148,7 @@ const emv_bitmask_t tvr_bits[] = {
 
 static const emv_tag_def_t tag_database[] = {
     // Core EMV tags (partial list - would include all 200+ tags)
-    {0x4F, "Application Identifier", EMV_TAG_BINARY, NULL},
+    {0x4F, "Application Identifier", EMV_TAG_BINARY, NULL}, 
     {0x50, "Application Label", EMV_TAG_STRING, NULL},
     {0x56, "Track 1 Data", EMV_TAG_BINARY, NULL},
     {0x57, "Track 2 Equivalent Data", EMV_TAG_BINARY, NULL},
@@ -246,7 +246,7 @@ typedef struct {
     const char* name;
     emv_tag_format_t type;
     const emv_bitmask_t* bitmask;
-} emv_tag_def_t;
+};
 
 // Binary search helper
 static int compare_tags(const void* a, const void* b) {

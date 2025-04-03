@@ -1,6 +1,3 @@
-#ifndef EMV_TAGS_H
-#define EMV_TAGS_H
-
 #include <stdint.h>
 #include "emv_defs.h"
 
@@ -34,8 +31,9 @@ typedef struct {
 typedef struct emv_tag_def_t {
     uint16_t tag;
     const char* name;
+    const char* type;
     const char* description;
-    emv_tag_format_t format; // Using the enum you defined in emv_defs.h
+    emv_tag_format_t* format; // Using the enum you defined in emv_defs.h
     const uint8_t* bitmask;
 }  emv_tag_def_t;
 

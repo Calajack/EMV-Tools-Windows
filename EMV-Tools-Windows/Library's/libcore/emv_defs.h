@@ -70,8 +70,6 @@ typedef struct {
     const char *description;
 } tvr_bit_t;
 
-extern const tvr_bit_t tvr_bits[];
-
 // CVM callback type
 typedef void (*emv_cvm_callback)(const struct tlv *cvm_data, void *data);
 

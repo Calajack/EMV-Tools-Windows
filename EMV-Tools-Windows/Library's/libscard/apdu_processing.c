@@ -28,7 +28,7 @@ int scard_omnikey_set_led(SCardContext *ctx, uint8_t led_state) {
                        &led_state, 1, NULL, 0, NULL);
 }
 
-int scard_transmit_ex(SCardContext *ctx, SCardManualContext *manual,
+int SCard_transmit_ex(SCardContext *ctx, SCardManualContext *manual,
     const uint8_t *apdu, size_t apdu_len,
     uint8_t *resp, size_t *resp_len, 
     SCardInterfaceType ifd_type) {

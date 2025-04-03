@@ -2,10 +2,13 @@
 #include "emv_pk.h"
 #include "crypto_windows.h"
 #include <windows.h>
+#include "emv_defs.h"
+#include "emv_tags.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <openssl/types.h>
 
 struct emv_pk *emv_pki_make_ca(const EMV_RSA_Key *cp,
         const unsigned char *rid, unsigned char index,

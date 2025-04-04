@@ -4,16 +4,16 @@
 #include <stdint.h>
 #include "emv_defs.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct emv_tag_info_t {
     uint16_t tag;
     const char* name;
     const char* type;
     const char* description;
 } emv_tag_info_t;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
     // Publicly exposed tags (used in APIs)
 #define EMV_TAG_PAN            0x5A     // Primary Account Number
@@ -47,7 +47,7 @@ extern "C" {
     int emv_tag_is_constructed(uint16_t tag);
 
     // External declarations
-    extern const char* tvr_bits[5][8];
+    extern const char* const tvr_bits[5][8];
     extern const struct emv_tag_def tag_database[];
     extern const struct emv_tag_def emv_tags[];
     extern const char* const tvr_bits[8][5];

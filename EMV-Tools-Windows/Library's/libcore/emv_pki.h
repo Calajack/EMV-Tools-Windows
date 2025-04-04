@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+    typedef struct emv_pk emv_pk_t;
+
 
 // EMV Public Key Structure (Windows-optimized)
 typedef struct {

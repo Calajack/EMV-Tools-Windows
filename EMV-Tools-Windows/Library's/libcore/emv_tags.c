@@ -8,6 +8,7 @@
 #include "tlv.h"
 #include "emv_commands.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <windows.h> // For SecureZeroMemory
 #include <wincrypt.h>  // For DPAPI
@@ -15,7 +16,7 @@
 #include <dpapi.h>
 #include <assert.h>
 
-static const emv_tag_def_t tag_database[] = {
+const emv_tag_def_t tag_database[] = {
     // Core EMV tags (partial list - would include all 200+ tags)
     {0x4F, "Application Identifier", EMV_TAG_BINARY},
     {0x50, "Application Label", EMV_TAG_STRING, NULL},
@@ -126,10 +127,10 @@ static int emv_tag_cmp(const void* a, const void* b)
 #ifdef _DEBUG
 static void validate_tags() {
     assert(tag_database[0].tag == 0x4F);
-    assert(tag_database[ARRAY_SIZE(tag_database)-1].tag == 0xFFFF);
+    assert(tag_database[ARRAY_SIZE(tag_database) - 1].tag == 0xFFFF);
     // Verify no duplicates
-    for(size_t i=0; i<ARRAY_SIZE(tag_database)-1; i++) {
-        assert(tag_database[i].tag < tag_database[i+1].tag);
+    for (size_t i = 0; i < ARRAY_SIZE(tag_database) - 1; i++) {
+        assert(tag_database[i].tag < tag_database[i + 1].tag);
     }
 }
 #endif
@@ -142,20 +143,20 @@ const char* tlv_tag_get_description(tlv_tag_t tag) {
     return emv_tag_get_description(tag);
 }
 
- static void build_tag_cache() {
-    for(size_t i=0; tag_database[i].tag != 0xFFFF; i++) {
+static void build_tag_cache() {
+    for (size_t i = 0; tag_database[i].tag != 0xFFFF; i++) {
         uint32_t hash = _mm_crc32_u16(0, tag_database[i].tag);
-        tag_cache[hash % CACHE_SIZE] = &tag_database[i];
+        memcpy(&tag_cache[hash % CACHE_SIZE], &tag_database[i], sizeof(emv_tag_info_t));
     }
 }
 
- static int emv_tag_protect(tlv_t* tlv) {
-    DATA_BLOB in = {tlv->len, tlv->value};
+static int emv_tag_protect(tlv_t* tlv) {
+    DATA_BLOB in = { tlv->len, tlv->value };
     DATA_BLOB out;
-    
+
     if (!CryptProtectData(&in, L"EMV_TAG", NULL, NULL, NULL, 0, &out))
         return GetLastError();
-    
+
     free(tlv->value);
     tlv->value = out.pbData;
     tlv->len = out.cbData;
@@ -206,34 +207,34 @@ const emv_bitmask_t tvr_bits[] = {
     {EMV_BIT(1, 8), "Offline data authentication not performed"},
     {EMV_BIT(1, 7), "SDA failed"},
     { EMV_BIT(1, 6), "ICC data missing" },
-	{ EMV_BIT(1, 5), "Card appears on terminal exception file" },
-	{ EMV_BIT(1, 4), "DDA failed" },
-	{ EMV_BIT(1, 3), "CDA failed" },
-	{ EMV_BIT(1, 2), "SDA selected" },
-	{ EMV_BIT(2, 8), "ICC and terminal have different application versions" },
-	{ EMV_BIT(2, 7), "Expired application" },
-	{ EMV_BIT(2, 6), "Application not yet effective" },
-	{ EMV_BIT(2, 5), "Requested service not allowed for card product" },
-	{ EMV_BIT(2, 4), "New card" },
-	{ EMV_BIT(3, 8), "Cardholder verification was not successful" },
-	{ EMV_BIT(3, 7), "Unrecognised CVM" },
-	{ EMV_BIT(3, 6), "PIN Try Limit exceeded" },
-	{ EMV_BIT(3, 5), "PIN entry required and PIN pad not present or not working" },
-	{ EMV_BIT(3, 4), "PIN entry required, PIN pad present, but PIN was not entered" },
-	{ EMV_BIT(3, 3), "Online PIN entered" },
-	{ EMV_BIT(4, 8), "Transaction exceeds floor limit" },
-	{ EMV_BIT(4, 7), "Lower consecutive offline limit exceeded" },
-	{ EMV_BIT(4, 6), "Upper consecutive offline limit exceeded" },
-	{ EMV_BIT(4, 5), "Transaction selected randomly for online processing" },
-	{ EMV_BIT(4, 4), "Merchant forced transaction online" },
-	{ EMV_BIT(5, 8), "Default TDOL used" },
-	{ EMV_BIT(5, 7), "Issuer authentication failed" },
-	{ EMV_BIT(5, 6), "Script processing failed before final GENERATE AC" },
-	{ EMV_BIT(5, 5), "Script processing failed after final GENERATE AC" },
-	{ EMV_BIT(5, 4), "Reserved for use by the EMV Contactless Specifications" },
-	{ EMV_BIT(5, 3), "Reserved for use by the EMV Contactless Specifications" },
-	{ EMV_BIT(5, 2), "Reserved for use by the EMV Contactless Specifications" },
-	{ EMV_BIT(5, 1), "Reserved for use by the EMV Contactless Specifications" },
+    { EMV_BIT(1, 5), "Card appears on terminal exception file" },
+    { EMV_BIT(1, 4), "DDA failed" },
+    { EMV_BIT(1, 3), "CDA failed" },
+    { EMV_BIT(1, 2), "SDA selected" },
+    { EMV_BIT(2, 8), "ICC and terminal have different application versions" },
+    { EMV_BIT(2, 7), "Expired application" },
+    { EMV_BIT(2, 6), "Application not yet effective" },
+    { EMV_BIT(2, 5), "Requested service not allowed for card product" },
+    { EMV_BIT(2, 4), "New card" },
+    { EMV_BIT(3, 8), "Cardholder verification was not successful" },
+    { EMV_BIT(3, 7), "Unrecognised CVM" },
+    { EMV_BIT(3, 6), "PIN Try Limit exceeded" },
+    { EMV_BIT(3, 5), "PIN entry required and PIN pad not present or not working" },
+    { EMV_BIT(3, 4), "PIN entry required, PIN pad present, but PIN was not entered" },
+    { EMV_BIT(3, 3), "Online PIN entered" },
+    { EMV_BIT(4, 8), "Transaction exceeds floor limit" },
+    { EMV_BIT(4, 7), "Lower consecutive offline limit exceeded" },
+    { EMV_BIT(4, 6), "Upper consecutive offline limit exceeded" },
+    { EMV_BIT(4, 5), "Transaction selected randomly for online processing" },
+    { EMV_BIT(4, 4), "Merchant forced transaction online" },
+    { EMV_BIT(5, 8), "Default TDOL used" },
+    { EMV_BIT(5, 7), "Issuer authentication failed" },
+    { EMV_BIT(5, 6), "Script processing failed before final GENERATE AC" },
+    { EMV_BIT(5, 5), "Script processing failed after final GENERATE AC" },
+    { EMV_BIT(5, 4), "Reserved for use by the EMV Contactless Specifications" },
+    { EMV_BIT(5, 3), "Reserved for use by the EMV Contactless Specifications" },
+    { EMV_BIT(5, 2), "Reserved for use by the EMV Contactless Specifications" },
+    { EMV_BIT(5, 1), "Reserved for use by the EMV Contactless Specifications" },
     BITMASK_TERMINATOR
 };
 
@@ -253,10 +254,10 @@ static int compare_tags(const void* a, const void* b) {
 }
 
 const emv_tag_info_t* emv_tag_get_info(uint16_t tag) {
-    const emv_tag_def_t* found = bsearch(&tag, tag_database, 
-        sizeof(tag_database)/sizeof(tag_database[0]) - 1,
+    const emv_tag_def_t* found = bsearch(&tag, tag_database,
+        sizeof(tag_database) / sizeof(tag_database[0]) - 1,
         sizeof(tag_database[0]), compare_tags);
-    
+
     static emv_tag_info info;
     if (found) {
         info.tag = found->tag;
@@ -276,15 +277,15 @@ static void emv_tag_secure_free(tlv_t* tlv) {
 }
 
 static int emv_process_cvm_secure(const tlv_t* cvm_tlv,
-                          emv_cvm_callback callback,
-                          void* userdata,
-                          CRITICAL_SECTION* lock) {
+    emv_cvm_callback callback,
+    void* userdata,
+    CRITICAL_SECTION* lock) {
     if (!lock) return EMV_ERR_INVALID_PARAM;
-    
+
     EnterCriticalSection(lock);
     int ret = emv_decode_cvm(cvm_tlv, callback, userdata);
     LeaveCriticalSection(lock);
-    
+
     return ret;
 }
 
@@ -292,21 +293,21 @@ static int emv_process_cvm_secure(const tlv_t* cvm_tlv,
 static tlv_t* emv_tag_create_aligned(size_t len) {
     void* ptr = _aligned_malloc(len, 8); // 8-byte alignment
     if (!ptr) return NULL;
-    
+
     tlv_t* tlv = (tlv_t*)ptr;
     tlv->value = ((uint8_t*)ptr) + sizeof(tlv_t);
     return tlv;
 }
 
 static int emv_decode_cvm(const tlv_t* cvm_tlv, emv_cvm_callback callback, void* userdata) {
-    if (!cvm_tlv || cvm_tlv->len < 8 || (cvm_tlv->len % 2) != 0) 
+    if (!cvm_tlv || cvm_tlv->len < 8 || (cvm_tlv->len % 2) != 0)
         return EMV_ERR_INVALID_FORMAT;
 
     // Extract X and Y values (4 bytes each)
-    uint32_t X = (cvm_tlv->value[0] << 24) | (cvm_tlv->value[1] << 16) 
-               | (cvm_tlv->value[2] << 8) | cvm_tlv->value[3];
-    uint32_t Y = (cvm_tlv->value[4] << 24) | (cvm_tlv->value[5] << 16) 
-               | (cvm_tlv->value[6] << 8) | cvm_tlv->value[7];
+    uint32_t X = (cvm_tlv->value[0] << 24) | (cvm_tlv->value[1] << 16)
+        | (cvm_tlv->value[2] << 8) | cvm_tlv->value[3];
+    uint32_t Y = (cvm_tlv->value[4] << 24) | (cvm_tlv->value[5] << 16)
+        | (cvm_tlv->value[6] << 8) | cvm_tlv->value[7];
 
     if (callback) {
         callback(userdata, X, Y, EMV_CVM_HEADER);
@@ -315,7 +316,7 @@ static int emv_decode_cvm(const tlv_t* cvm_tlv, emv_cvm_callback callback, void*
     // Process each CVM rule
     for (size_t i = 8; i < cvm_tlv->len; i += 2) {
         uint8_t method = cvm_tlv->value[i] & 0x3F;
-        uint8_t condition = cvm_tlv->value[i+1];
+        uint8_t condition = cvm_tlv->value[i + 1];
         bool continue_if_fail = (cvm_tlv->value[i] & 0x40) != 0;
 
         if (callback) {
@@ -329,7 +330,7 @@ static const char* emv_tag_to_string(uint16_t tag) {
     const emv_tag_info_t* info = emv_tag_get_info(tag);
     return info ? info->name : "UNKNOWN";
 }
-int emv_process_dol_with_context(const tlv_t* dol, const tlvdb_t* context, emv_dol_callback cb, void* userdata)
+static int emv_process_dol_with_context(const tlv_t* dol, const tlvdb_t* context, emv_dol_callback cb, void* userdata)
 {
     if (!dol || !context || !cb)
         return -1;
@@ -379,17 +380,17 @@ int emv_process_dol_with_context(const tlv_t* dol, const tlvdb_t* context, emv_d
 
     return 1;
 }
-    
+
 // Bitmask decoding (Windows-optimized)
 static void emv_tag_decode_bitmask(const tlv_t* tlv, emv_bitmask_callback callback, void* userdata) {
     if (!tlv || tlv->type != EMV_TAG_BITMASK) return;
-    
-    const emv_tag_def_t* def = bsearch(&tlv->tag, tag_database, 
-        sizeof(tag_database)/sizeof(tag_database[0]) - 1,
+
+    const emv_tag_def_t* def = bsearch(&tlv->tag, tag_database,
+        sizeof(tag_database) / sizeof(tag_database[0]) - 1,
         sizeof(tag_database[0]), compare_tags);
-    
+
     if (!def || !def->bitmask) return;
-    
+
     for (size_t byte = 0; byte < tlv->len; byte++) {
         uint8_t val = tlv->value[byte];
         for (int bit = 7; bit >= 0; bit--) {
@@ -417,37 +418,37 @@ static void emv_tag_format_bitmask(const tlv_t* tlv, FILE* out) {
     emv_tag_decode_bitmask(tlv, [](void* f, uint16_t bit, const char* name) {
         fprintf((FILE*)f, "\t%s - %s\n", bitstrings[bit % 8], name);
         return true;
-    }, out);
+        }, out);
 }
 // Date parsing (YYMMDD format)
 static int emv_tag_parse_date(const tlv_t* tlv, struct tm* date) {
-    if (!tlv || tlv->type != EMV_TAG_DATE || tlv->len != 3) 
+    if (!tlv || tlv->type != EMV_TAG_DATE || tlv->len != 3)
         return EMV_ERR_INVALID_FORMAT;
-    
+
     date->tm_year = (tlv->value[0] >> 4) * 10 + (tlv->value[0] & 0xF) + 100; // Years since 1900
     date->tm_mon = (tlv->value[1] >> 4) * 10 + (tlv->value[1] & 0xF) - 1; // 0-11
     date->tm_mday = (tlv->value[2] >> 4) * 10 + (tlv->value[2] & 0xF);
-    
+
     return EMV_OK;
 }
 
 // DOL parsing (Data Object List)
 static int emv_tag_parse_dol(const tlv_t* dol, emv_dol_callback callback, void* userdata) {
-    if (!dol || dol->type != EMV_TAG_DOL) 
+    if (!dol || dol->type != EMV_TAG_DOL)
         return EMV_ERR_INVALID_PARAM;
-    
+
     const uint8_t* ptr = dol->value;
     size_t remaining = dol->len;
-    
+
     while (remaining > 0) {
         tlv_t entry;
-        if (!tlv_parse_tl(&ptr, &remaining, &entry)) 
+        if (!tlv_parse_tl(&ptr, &remaining, &entry))
             break;
-            
+
         if (callback) {
             callback(userdata, &entry);
         }
     }
-    
+
     return EMV_OK;
 }

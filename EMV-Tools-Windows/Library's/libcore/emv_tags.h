@@ -48,9 +48,8 @@ typedef struct emv_tag_info_t {
 
     // External declarations
     extern const char* const tvr_bits[5][8];
-    extern const struct emv_tag_def tag_database[];
+    extern const struct emv_tag_def_t tag_database[];
     extern const struct emv_tag_def emv_tags[];
-    extern const char* const tvr_bits[8][5];
 
 #ifdef __cplusplus
 }

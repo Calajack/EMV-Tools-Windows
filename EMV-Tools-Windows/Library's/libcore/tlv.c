@@ -466,13 +466,23 @@ struct tlvdb *tlvdb_decode(const struct tlvdb *tlvdb, tlv_tag_t tag, size_t *len
 }
 
 // Use the emv_tags module for tag names
-const char *tlv_tag_get_name(tlv_tag_t tag)
+static const char* emv_tag_get_name(uint32_t tag)
 {
-    return emv_tag_get_name(tag);
+    // Look up the tag name in a predefined table
+    for (size_t i = 0; i < sizeof(emv_tags) / sizeof(emv_tags[0]); i++) {
+        if (emv_tags[i].tag == tag)
+            return emv_tags[i].name;
+    }
+    return NULL;
 }
 
 // Use the emv_tags module for tag descriptions
-const char *tlv_tag_get_description(tlv_tag_t tag)
+static const char* emv_tag_get_description(uint32_t tag)
 {
-    return emv_tag_get_description(tag);
+    // Look up the tag description
+    for (size_t i = 0; i < sizeof(emv_tags) / sizeof(emv_tags[0]); i++) {
+        if (emv_tags[i].tag == tag)
+            return emv_tags[i].description;
+    }
+    return NULL;
 }

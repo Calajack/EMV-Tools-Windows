@@ -122,6 +122,24 @@ static int emv_tag_cmp(const void* a, const void* b)
         return 0;
 }
 
+const char* emv_tag_get_name(uint32_t tag)
+{
+    for (size_t i = 0; i < sizeof(tag_database) / sizeof(tag_database[0]); i++) {
+        if (tag_database[i].tag == tag)
+            return tag_database[i].name;
+    }
+    return NULL;
+}
+
+const char* emv_tag_get_description(uint32_t tag)
+{
+    for (size_t i = 0; i < sizeof(tag_database) / sizeof(tag_database[0]); i++) {
+        if (tag_database[i].tag == tag)
+            return tag_database[i].description;
+    }
+    return NULL;
+}
+
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #ifdef _DEBUG
@@ -330,7 +348,10 @@ static const char* emv_tag_to_string(uint16_t tag) {
     const emv_tag_info_t* info = emv_tag_get_info(tag);
     return info ? info->name : "UNKNOWN";
 }
-static int emv_process_dol_with_context(const tlv_t* dol, const tlvdb_t* context, emv_dol_callback cb, void* userdata)
+int emv_process_dol_with_context(const tlv_t* dol,
+    const tlvdb_t* context,
+    emv_dol_callback cb,
+    void* userdata)
 {
     if (!dol || !context || !cb)
         return -1;

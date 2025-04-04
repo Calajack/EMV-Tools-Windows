@@ -5,6 +5,8 @@
 #include "tlv.h"
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/rsa.h>
+#include <openssl/evp.h>
 
 static struct emv_pk *emv_pki_decode_key(const struct tlvdb *db, tlv_tag_t tag, tlv_tag_t mod_tag, tlv_tag_t exp_tag)
 {
@@ -32,7 +34,7 @@ static struct emv_pk *emv_pki_decode_key(const struct tlvdb *db, tlv_tag_t tag, 
     return pk;
 }
 
-static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db)
+static struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db)
 {
     const struct tlv *issuer_cert_tlv = tlvdb_get(db, 0x90, 0);
     const struct tlv *issuer_rem_tlv = tlvdb_get(db, 0x92, NULL);
@@ -150,7 +152,7 @@ static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, con
     return issuer_pk;
 }
 
-struct emv_pk_t *emv_pki_recover_icc_cert(const struct emv_pk *pk, const struct tlvdb *db, 
+struct emv_pk *emv_pki_recover_icc_cert(const struct emv_pk *pk, const struct tlvdb *db, 
                                            unsigned char *pan, size_t pan_len)
 {
     const struct tlv *icc_cert_tlv = tlvdb_get(db, 0x9F46, NULL);
@@ -275,7 +277,7 @@ struct emv_pk_t *emv_pki_recover_icc_cert(const struct emv_pk *pk, const struct 
     return icc_pk;
 }
 
-static struct emv_pk_t *emv_pki_recover_icc_pe_cert(const struct emv_pk *pk, const struct tlvdb *db)
+static struct emv_pk *emv_pki_recover_icc_pe_cert(const struct emv_pk *pk, const struct tlvdb *db)
 {
     const struct tlv *cert_tlv = tlvdb_get(db, 0x9F2D, NULL);
     const struct tlv *exp_tlv = tlvdb_get(db, 0x9F2E, NULL);

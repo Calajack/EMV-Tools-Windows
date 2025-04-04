@@ -83,6 +83,6 @@ struct tlvdb *dol_process(tlv_tag_t tag, const struct dol *dol, const struct tlv
 
 #ifdef __cplusplus
 }
-#endif
+#endif EMV_DOL_H
 
-#endif
+#endif 

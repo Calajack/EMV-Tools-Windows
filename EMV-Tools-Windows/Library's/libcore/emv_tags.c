@@ -17,7 +17,7 @@
 
 static const emv_tag_def_t tag_database[] = {
     // Core EMV tags (partial list - would include all 200+ tags)
-    {0x4F, "Application Identifier", EMV_TAG_BINARY, NULL},
+    {0x4F, "Application Identifier", EMV_TAG_BINARY},
     {0x50, "Application Label", EMV_TAG_STRING, NULL},
     {0x56, "Track 1 Data", EMV_TAG_BINARY, NULL},
     {0x57, "Track 2 Equivalent Data", EMV_TAG_BINARY, NULL},
@@ -329,10 +329,55 @@ static const char* emv_tag_to_string(uint16_t tag) {
     const emv_tag_info_t* info = emv_tag_get_info(tag);
     return info ? info->name : "UNKNOWN";
 }
-int emv_process_dol_with_context(const tlv_t* dol, {
-    const tlvdb_t * context,
-    *emv_dol_callback {} cb,
-       void* userdata);
+int emv_process_dol_with_context(const tlv_t* dol, const tlvdb_t* context, emv_dol_callback cb, void* userdata)
+{
+    if (!dol || !context || !cb)
+        return -1;
+
+    const unsigned char* ptr = dol->value;
+    size_t left = dol->len;
+
+    while (left) {
+        if (left < 2) {
+            printf("DOL parse error\n");
+            return -1;
+        }
+
+        unsigned int tag = ptr[0];
+        if ((tag & 0x1F) == 0x1F) {
+            if (left < 3) {
+                printf("DOL parse error\n");
+                return -1;
+            }
+            tag = (tag << 8) | ptr[1];
+            ptr += 2;
+            left -= 2;
+        }
+        else {
+            ptr += 1;
+            left -= 1;
+        }
+
+        if (left < 1) {
+            printf("DOL parse error\n");
+            return -1;
+        }
+
+        unsigned int len = ptr[0];
+        ptr += 1;
+        left -= 1;
+
+        const tlv_t* tlv = tlvdb_get(context, tag, NULL);
+        if (!tlv) {
+            printf("DOL tag %x not found\n", tag);
+            continue;
+        }
+
+        if (!cb(userdata, tlv))
+            return 0;
+    }
+
+    return 1;
 }
     
 // Bitmask decoding (Windows-optimized)

@@ -1,4 +1,6 @@
-include "emv_pk.h"
+
+#include "emv_pki.h"
+#include "emv_pk.h"
 #include "crypto_windows.h"
 #include "tlv.h"
 #include <stdlib.h>
@@ -148,7 +150,7 @@ static struct emv_pk_t *emv_pki_recover_issuer_cert(const struct emv_pk *pk, con
     return issuer_pk;
 }
 
-static struct emv_pk_t *emv_pki_recover_icc_cert(const struct emv_pk *pk, const struct tlvdb *db, 
+struct emv_pk_t *emv_pki_recover_icc_cert(const struct emv_pk *pk, const struct tlvdb *db, 
                                            unsigned char *pan, size_t pan_len)
 {
     const struct tlv *icc_cert_tlv = tlvdb_get(db, 0x9F46, NULL);

@@ -1,5 +1,7 @@
 #include "emv_pk.h"
 #include "crypto_windows.h"
+#include <openssl/rsa.h>
+#include <openssl/bn.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>

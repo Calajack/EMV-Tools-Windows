@@ -1,5 +1,8 @@
 #include "scard_common.h"
 #include <winscard.h>
+#include <windows.h>
+#include <string.h>
+#include <stdlib.h>
 
 // Omnikey-specific timeout settings (milliseconds)
 #define OMNIKEY_DEFAULT_TIMEOUT 3000

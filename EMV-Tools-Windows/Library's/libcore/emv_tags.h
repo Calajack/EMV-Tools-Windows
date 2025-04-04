@@ -33,7 +33,7 @@ extern "C" {
         size_t max_len;
     } emv_tag_length_info_t;  // Added a name to make it complete
 
-    typedef struct emv_tag_def {
+    typedef struct {
         uint16_t tag;
         const char* name;
         const char* type;
@@ -49,6 +49,8 @@ extern "C" {
     // External declarations
     extern const char* tvr_bits[5][8];
     extern const struct emv_tag_def tag_database[];
+    extern const struct emv_tag_def emv_tags[];
+    extern const char* const tvr_bits[8][5];
 
 #ifdef __cplusplus
 }

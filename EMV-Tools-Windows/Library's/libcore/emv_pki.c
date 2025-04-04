@@ -7,6 +7,8 @@
 #include <string.h>
 #include <openssl/rsa.h>
 #include <openssl/evp.h>
+#include <openssl/bn.h>
+#include <openssl/sha.h>
 
 static struct emv_pk *emv_pki_decode_key(const struct tlvdb *db, tlv_tag_t tag, tlv_tag_t mod_tag, tlv_tag_t exp_tag)
 {
@@ -107,7 +109,7 @@ static struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const
     if (issuer_rem_tlv && issuer_rem_tlv->len > 0) {
         size_t rem_pos = issuer_data_len - 1;
         if (rem_pos + issuer_rem_tlv->len > issuer_pk->mlen) {
-            emv_pk_free((struct emv_pk*)&issuer_pk);
+            emv_pk_free((struct emv_pk*) & issuer_pk);
             free(modulus);
             emv_rsa_free_key(&issuer_key);
             return NULL;

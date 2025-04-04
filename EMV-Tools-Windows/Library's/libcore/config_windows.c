@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "config_windows.h"
 #include <windows.h>
+#include <wincrypt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

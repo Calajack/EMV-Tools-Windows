@@ -4,7 +4,9 @@
 #include <windows.h>
 #include "emv_defs.h"
 #include "emv_tags.h"
-
+#include <openssl/rsa.h>
+#include <openssl/bn.h>
+#include <openssl/sha.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>

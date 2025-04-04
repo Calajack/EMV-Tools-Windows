@@ -36,7 +36,7 @@ static struct emv_pk *emv_pki_decode_key(const struct tlvdb *db, tlv_tag_t tag, 
     return pk;
 }
 
-static struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db)
+static struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db) 
 {
     const struct tlv *issuer_cert_tlv = tlvdb_get(db, 0x90, 0);
     const struct tlv *issuer_rem_tlv = tlvdb_get(db, 0x92, NULL);

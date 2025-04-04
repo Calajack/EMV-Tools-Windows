@@ -1,4 +1,4 @@
-// config_windows.c
+#include <stdint.h>
 #include "config_windows.h"
 #include <windows.h>
 #include <stdio.h>

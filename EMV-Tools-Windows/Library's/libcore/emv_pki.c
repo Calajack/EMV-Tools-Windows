@@ -1,3 +1,4 @@
+include "emv_pk.h"
 #include "crypto_windows.h"
 #include "tlv.h"
 #include <stdlib.h>
@@ -483,7 +484,7 @@ static struct tlvdb *emv_pki_recover_dac(const struct emv_pk *pk, const struct t
     return dac_db;
 }
 
-struct tlvdb *emv_pki_recover_idn(const struct emv_pk *pk, const struct tlvdb *db, 
+static struct tlvdb *emv_pki_recover_idn(const struct emv_pk *pk, const struct tlvdb *db,
                               const unsigned char *dyn_data, size_t dyn_data_len)
 {
     const struct tlv *idn_tlv = tlvdb_get(db, 0x9F4B, NULL);

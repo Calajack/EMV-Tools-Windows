@@ -331,7 +331,7 @@ static const char* emv_tag_to_string(uint16_t tag) {
 }
 int emv_process_dol_with_context(const tlv_t* dol, {
     const tlvdb_t * context,
-    emv_dol_callback {} cb,
+    *emv_dol_callback {} cb,
        void* userdata);
 }
     

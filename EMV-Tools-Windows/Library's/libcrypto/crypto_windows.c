@@ -5,6 +5,10 @@
 #include <openssl/err.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <windows.h>
+#include <wincrypt.h>
+#include <openssl/bn.h>
+#include <openssl/crypto.h>
 
 // Initialize OpenSSL (call this once at program start)
 bool emv_crypto_init() {

@@ -1,4 +1,3 @@
-
 #include "emv_pki.h"
 #include "emv_pk.h"
 #include "crypto_windows.h"
@@ -290,6 +289,11 @@ static struct emv_pk *emv_pki_recover_icc_pe_cert(const struct emv_pk *pk, const
         return NULL;
     
     return emv_pki_recover_icc_cert(pk, db, pan_tlv->value, pan_tlv->len);
+}
+
+emv_pk* emv_pki_perform_cda(const emv_pk* enc_pk, const tlvdb db, const tlv_t* pdol_data_tlv)
+{
+    return NULL;
 }
 
 static bool emv_pki_verify_sig(const struct emv_pk *pk, const struct tlvdb *db,

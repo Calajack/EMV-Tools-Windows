@@ -22,11 +22,11 @@ extern "C" {
     typedef struct {
         uint16_t tag;
         const char* name;
-        const char* type;
-        const char* description;
-        emv_tag_format_t format;  // This should be defined in emv_defs.h
-        const uint8_t* bitmask;
+        emv_tag_format_t format;  // This is what you're using EMV_TAG_BINARY for
+        const void* bitmask;      // Optional pointer to bitmask array
+        const char* description;  // Add this field back
     } emv_tag_def_t;
+
     // Function declarations
     const emv_tag_info_t* emv_tag_get_info(uint16_t tag);
     int emv_tag_is_constructed(uint16_t tag);

@@ -14,7 +14,7 @@ enum {
 };
 
 enum {
-    PK_RSA
+    PK_RSA 
 };
 
 struct emv_pk {
@@ -30,6 +30,8 @@ struct emv_pk {
     unsigned char hash_algo;
     unsigned char pan[10]; // Add this field
 };
+
+typedef struct emv_pk emv_pk_t;
 
 struct emv_pk *emv_pk_parse_pk(char *buf);
 char *emv_pk_dump_pk(const struct emv_pk *pk);

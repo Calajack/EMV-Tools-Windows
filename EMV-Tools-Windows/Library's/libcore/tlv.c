@@ -16,7 +16,7 @@ uint16_t tlv_tag_parse(const uint8_t* buf, size_t len) {
 
 #pragma pop_macro("BYTE")
 
-static bool tlv_parse_tag(const unsigned char **buf, size_t *len, tlv_tag_t *tag)
+static bool tlv_parse_tag(const unsigned char** buf, size_t* len, tlv_tag_t* tag)
 {
     if (*len == 0)
         return false;
@@ -40,7 +40,7 @@ static bool tlv_parse_tag(const unsigned char **buf, size_t *len, tlv_tag_t *tag
     return true;
 }
 
-static bool tlv_parse_len(const unsigned char **buf, size_t *len, size_t *out_len)
+static bool tlv_parse_len(const unsigned char** buf, size_t* len, size_t* out_len)
 {
     if (*len == 0)
         return false;
@@ -71,7 +71,7 @@ static bool tlv_parse_len(const unsigned char **buf, size_t *len, size_t *out_le
     return true;
 }
 
-bool tlv_parse_tl(const unsigned char **buf, size_t *len, struct tlv *tlv)
+bool tlv_parse_tl(const unsigned char** buf, size_t* len, struct tlv* tlv)
 {
     if (!tlv_parse_tag(buf, len, &tlv->tag))
         return false;
@@ -84,7 +84,7 @@ bool tlv_parse_tl(const unsigned char **buf, size_t *len, struct tlv *tlv)
     return true;
 }
 
-bool tlv_parse_tlv(const unsigned char **buf, size_t *len, struct tlv *tlv)
+bool tlv_parse_tlv(const unsigned char** buf, size_t* len, struct tlv* tlv)
 {
     if (!tlv_parse_tl(buf, len, tlv))
         return false;
@@ -92,21 +92,21 @@ bool tlv_parse_tlv(const unsigned char **buf, size_t *len, struct tlv *tlv)
     if (tlv->len > *len)
         return false;
 
-    tlv->value = (unsigned char *)*buf;
+    tlv->value = (unsigned char*)*buf;
     *buf += tlv->len;
     *len -= tlv->len;
 
     return true;
 }
 
-bool tlv_is_constructed(const struct tlv *tlv)
+bool tlv_is_constructed(const struct tlv* tlv)
 {
     return tlv->tag & TLV_TAG_COMPLEX;
 }
 
-struct tlvdb *tlvdb_fixed(tlv_tag_t tag, size_t len, const unsigned char *value)
+struct tlvdb* tlvdb_fixed(tlv_tag_t tag, size_t len, const unsigned char* value)
 {
-    struct tlvdb *tlvdb = calloc(1, sizeof(*tlvdb));
+    struct tlvdb* tlvdb = calloc(1, sizeof(*tlvdb));
     if (!tlvdb)
         return NULL;
 
@@ -123,7 +123,7 @@ struct tlvdb *tlvdb_fixed(tlv_tag_t tag, size_t len, const unsigned char *value)
     return tlvdb;
 }
 
-void tlvdb_free(struct tlvdb *tlvdb)
+void tlvdb_free(struct tlvdb* tlvdb)
 {
     if (!tlvdb)
         return;
@@ -137,7 +137,7 @@ void tlvdb_free(struct tlvdb *tlvdb)
     free(tlvdb);
 }
 
-void tlvdb_add(struct tlvdb *tlvdb, struct tlvdb *other)
+void tlvdb_add(struct tlvdb* tlvdb, struct tlvdb* other)
 {
     if (!tlvdb || !other)
         return;
@@ -149,12 +149,12 @@ void tlvdb_add(struct tlvdb *tlvdb, struct tlvdb *other)
     tlvdb->next = other;
 }
 
-struct tlvdb *tlvdb_parse(const unsigned char *buf, size_t len)
+struct tlvdb* tlvdb_parse(const unsigned char* buf, size_t len)
 {
     if (!buf || !len)
         return NULL;
 
-    struct tlvdb *tlvdb = NULL;
+    struct tlvdb* tlvdb = NULL;
     struct tlv tlv;
 
     if (!tlv_parse_tlv(&buf, &len, &tlv))
@@ -167,8 +167,8 @@ struct tlvdb *tlvdb_parse(const unsigned char *buf, size_t len)
     // Parse children for constructed tags
     if (tlv_is_constructed(&tlv)) {
         size_t child_len = tlv.len;
-        const unsigned char *child_data = tlv.value;
-        struct tlvdb *child_db = tlvdb_parse_multi(child_data, child_len);
+        const unsigned char* child_data = tlv.value;
+        struct tlvdb* child_db = tlvdb_parse_multi(child_data, child_len);
         if (child_db) {
             tlvdb->children = child_db;
             child_db->parent = tlvdb;
@@ -178,19 +178,19 @@ struct tlvdb *tlvdb_parse(const unsigned char *buf, size_t len)
     return tlvdb;
 }
 
-struct tlvdb *tlvdb_parse_multi(const unsigned char *buf, size_t len)
+struct tlvdb* tlvdb_parse_multi(const unsigned char* buf, size_t len)
 {
     if (!buf || !len)
         return NULL;
 
-    struct tlvdb *result = NULL;
-    struct tlvdb *last = NULL;
-    struct tlvdb *new_db;
+    struct tlvdb* result = NULL;
+    struct tlvdb* last = NULL;
+    struct tlvdb* new_db;
     size_t pos = 0;
 
     while (pos < len) {
         struct tlv tlv;
-        const unsigned char *tmp = buf + pos;
+        const unsigned char* tmp = buf + pos;
         size_t tmp_len = len - pos;
 
         if (!tlv_parse_tlv(&tmp, &tmp_len, &tlv))
@@ -204,7 +204,8 @@ struct tlvdb *tlvdb_parse_multi(const unsigned char *buf, size_t len)
         if (!result) {
             result = new_db;
             last = result;
-        } else {
+        }
+        else {
             last->next = new_db;
             last = new_db;
         }
@@ -215,7 +216,7 @@ struct tlvdb *tlvdb_parse_multi(const unsigned char *buf, size_t len)
     return result;
 }
 
-const struct tlv *tlvdb_get(const struct tlvdb *tlvdb, tlv_tag_t tag, const struct tlv *prev)
+const struct tlv* tlvdb_get(const struct tlvdb* tlvdb, tlv_tag_t tag, const struct tlv* prev)
 {
     if (!tlvdb)
         return NULL;
@@ -234,7 +235,7 @@ const struct tlv *tlvdb_get(const struct tlvdb *tlvdb, tlv_tag_t tag, const stru
     return NULL;
 }
 
-const struct tlvdb *tlvdb_get_tlvdb(const struct tlvdb *tlvdb, tlv_tag_t tag)
+const struct tlvdb* tlvdb_get_tlvdb(const struct tlvdb* tlvdb, tlv_tag_t tag)
 {
     if (!tlvdb)
         return NULL;
@@ -248,7 +249,7 @@ const struct tlvdb *tlvdb_get_tlvdb(const struct tlvdb *tlvdb, tlv_tag_t tag)
     return NULL;
 }
 
-const struct tlvdb *tlvdb_find(const struct tlvdb *tlvdb, tlv_tag_t tag)
+const struct tlvdb* tlvdb_find(const struct tlvdb* tlvdb, tlv_tag_t tag)
 {
     if (!tlvdb)
         return NULL;
@@ -257,7 +258,7 @@ const struct tlvdb *tlvdb_find(const struct tlvdb *tlvdb, tlv_tag_t tag)
         return tlvdb;
 
     // Try children
-    const struct tlvdb *child = tlvdb_find(tlvdb->children, tag);
+    const struct tlvdb* child = tlvdb_find(tlvdb->children, tag);
     if (child)
         return child;
 
@@ -265,7 +266,7 @@ const struct tlvdb *tlvdb_find(const struct tlvdb *tlvdb, tlv_tag_t tag)
     return tlvdb_find(tlvdb->next, tag);
 }
 
-const struct tlvdb *tlvdb_find_next(const struct tlvdb *tlvdb, const struct tlvdb *prev)
+const struct tlvdb* tlvdb_find_next(const struct tlvdb* tlvdb, const struct tlvdb* prev)
 {
     if (!tlvdb || !prev)
         return NULL;
@@ -280,7 +281,7 @@ const struct tlvdb *tlvdb_find_next(const struct tlvdb *tlvdb, const struct tlvd
             return tlvdb;
 
         // Try children
-        const struct tlvdb *child = tlvdb_find(tlvdb->children, tag);
+        const struct tlvdb* child = tlvdb_find(tlvdb->children, tag);
         if (child)
             return child;
 
@@ -291,7 +292,7 @@ const struct tlvdb *tlvdb_find_next(const struct tlvdb *tlvdb, const struct tlvd
     return NULL;
 }
 
-const struct tlv *tlvdb_get_inchild(const struct tlvdb *tlvdb, tlv_tag_t tag, const struct tlv *prev)
+const struct tlv* tlvdb_get_inchild(const struct tlvdb* tlvdb, tlv_tag_t tag, const struct tlv* prev)
 {
     if (!tlvdb)
         return NULL;
@@ -301,7 +302,7 @@ const struct tlv *tlvdb_get_inchild(const struct tlvdb *tlvdb, tlv_tag_t tag, co
         tlvdb = tlvdb->parent;
 
     // Find the first occurrence
-    const struct tlvdb *found = tlvdb_find(tlvdb, tag);
+    const struct tlvdb* found = tlvdb_find(tlvdb, tag);
     if (!found)
         return NULL;
 
@@ -314,7 +315,7 @@ const struct tlv *tlvdb_get_inchild(const struct tlvdb *tlvdb, tlv_tag_t tag, co
     return found ? &found->tag : NULL;
 }
 
-void tlvdb_visit(const struct tlvdb *tlvdb, void (*func)(const struct tlv *tlv, void *data), void *data)
+void tlvdb_visit(const struct tlvdb* tlvdb, void (*func)(const struct tlv* tlv, void* data), void* data)
 {
     if (!tlvdb || !func)
         return;
@@ -325,7 +326,7 @@ void tlvdb_visit(const struct tlvdb *tlvdb, void (*func)(const struct tlv *tlv, 
     tlvdb_visit(tlvdb->next, func, data);
 }
 
-unsigned char *tlv_encode(const struct tlv *tlv, size_t *len)
+unsigned char* tlv_encode(const struct tlv* tlv, size_t* len)
 {
     if (!tlv || !len)
         return NULL;
@@ -353,7 +354,7 @@ unsigned char *tlv_encode(const struct tlv *tlv, size_t *len)
 
     // Total size
     size = tag_len + len_len + tlv->len;
-    unsigned char *data = malloc(size);
+    unsigned char* data = malloc(size);
     if (!data)
         return NULL;
 
@@ -367,7 +368,8 @@ unsigned char *tlv_encode(const struct tlv *tlv, size_t *len)
     // Encode length
     if (tlv->len < 128) {
         data[tag_len] = tlv->len;
-    } else {
+    }
+    else {
         size_t tmp = tlv->len;
         data[tag_len] = 0x80 + (len_len - 1);
         for (int i = len_len - 1; i > 0; i--) {
@@ -383,7 +385,7 @@ unsigned char *tlv_encode(const struct tlv *tlv, size_t *len)
     return data;
 }
 
-void tlv_tag_dump(const struct tlv *tlv, FILE *f, int level)
+void tlv_tag_dump(const struct tlv* tlv, FILE* f, int level)
 {
     if (!tlv || !f)
         return;
@@ -393,7 +395,7 @@ void tlv_tag_dump(const struct tlv *tlv, FILE *f, int level)
 
     fprintf(f, "Tag: %04x (", tlv->tag);
 
-    const char *name = tlv_tag_get_name(tlv->tag);
+    const char* name = tlv_tag_get_name(tlv->tag);
     if (name)
         fprintf(f, "%s", name);
     else
@@ -412,7 +414,7 @@ void tlv_tag_dump(const struct tlv *tlv, FILE *f, int level)
     }
 }
 
-void tlvdb_dump(const struct tlvdb *tlvdb, FILE *f)
+void tlvdb_dump(const struct tlvdb* tlvdb, FILE* f)
 {
     if (!tlvdb || !f)
         return;
@@ -447,22 +449,22 @@ void tlvdb_dump(const struct tlvdb *tlvdb, FILE *f)
  //   return NULL;
 //}
 
-struct tlvdb *tlvdb_elm_get_next(struct tlvdb *tlvdb)
+struct tlvdb* tlvdb_elm_get_next(struct tlvdb* tlvdb)
 {
     return tlvdb ? tlvdb->next : NULL;
 }
 
-struct tlvdb *tlvdb_elm_get_children(struct tlvdb *tlvdb)
+struct tlvdb* tlvdb_elm_get_children(struct tlvdb* tlvdb)
 {
     return tlvdb ? tlvdb->children : NULL;
 }
 
-struct tlvdb *tlvdb_decode(const struct tlvdb *tlvdb, tlv_tag_t tag, size_t *len, unsigned char **buf)
+struct tlvdb* tlvdb_decode(const struct tlvdb* tlvdb, tlv_tag_t tag, size_t* len, unsigned char** buf)
 {
     if (!tlvdb || !len || !buf)
         return NULL;
 
-    const struct tlv *tlv = tlvdb_get(tlvdb, tag, NULL);
+    const struct tlv* tlv = tlvdb_get(tlvdb, tag, NULL);
     if (!tlv)
         return NULL;
 
@@ -480,7 +482,7 @@ struct tlvdb *tlvdb_decode(const struct tlvdb *tlvdb, tlv_tag_t tag, size_t *len
 static const char* emv_tag_get_name(uint32_t tag)
 {
     // Look up the tag name in a predefined table
-    for (size_t i = 0; i < sizeof((emv_tags) / sizeof(emv_tags[0]); i++) {
+    for (size_t i = 0; i < sizeof(emv_tags) / sizeof(emv_tags[0]); i++) {
         if (emv_tags[i].tag == tag)
             return emv_tags[i].name;
     }

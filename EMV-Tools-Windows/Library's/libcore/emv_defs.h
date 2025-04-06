@@ -7,9 +7,10 @@
 #include "tlv.h"
 #include <openssl/types.h>
 
-#define EMV_TAG_YYMMDD EMV_TAG_DATE
-#define EMV_TAG_BITMASK 8
+
 #define EMV_TAG_CVM_LIST 9
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,8 +37,7 @@ typedef enum {
     EMV_TAG_BCD,
     EMV_TAG_DATE,  // YYMMDD 
     EMV_TAG_DOL,
-    EMV_AIP,
-    AIP_BITS,
+    EMV_TAG_BITMASK
 } emv_tag_format_t;
 
 typedef enum {

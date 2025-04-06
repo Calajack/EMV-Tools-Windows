@@ -27,7 +27,7 @@ const auc_bit_t auc_bits[] = {
 
 // TVR bit definitions
 const tvr_bit_t tvr_bits[] = {
-    { "Offline Data Auth not performed", "Offline Data Authentication was not performed" },
+    { "Offline Data Auth not performed", "Offline Data Authentication was not performed" }, 
     { "SDA failed", "SDA Failed" },
     { "ICC Data Missing", "ICC Data Missing" },
     { "Card on Terminal Exception File", "Card appears on terminal exception file" },

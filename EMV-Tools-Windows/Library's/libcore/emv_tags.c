@@ -18,14 +18,14 @@
 
 const emv_tag_def_t tag_database[] = {
     // Core EMV tags (partial list - would include all 200+ tags)
-    {0x4F, "Application Identifier", EMV_TAG_BINARY},
+    {0x4F, "Application Identifier", EMV_TAG_BINARY },
     {0x50, "Application Label", EMV_TAG_STRING, NULL},
     {0x56, "Track 1 Data", EMV_TAG_BINARY, NULL},
     {0x57, "Track 2 Equivalent Data", EMV_TAG_BINARY, NULL},
     {0x5A, "PAN", EMV_TAG_BINARY, NULL},
     {0x5F20, "Cardholder Name", EMV_TAG_STRING, NULL},
-    {0x5F24, "Expiration Date", EMV_TAG_YYMMDD, NULL},
-    {0x5f25, "Application Effective Date", EMV_TAG_YYMMDD },
+    {0x5F24, "Expiration Date", EMV_TAG_DATE, NULL},
+    {0x5f25, "Application Effective Date", EMV_TAG_DATE },
     {0x5f28, "Issuer Country Code", EMV_TAG_NUMERIC },
     {0x5f2a, "Transaction Currency Code", EMV_TAG_NUMERIC },
     {0x5f2d, "Language Preference", EMV_TAG_STRING },
@@ -36,7 +36,7 @@ const emv_tag_def_t tag_database[] = {
     {0x70  , "READ RECORD Response Message Template" },
     {0x77  , "Response Message Template Format 2" },
     {0x80  , "Response Message Template Format 1" },
-    {0x82  , "Application Interchange Profile", EMV_TAG_BITMASK, EMV_AIP, AIP_BITS },
+    {0x82  , "Application Interchange Profile", EMV_TAG_BITMASK, aip_bits },
     {0x83  , "Command Template" },
     {0x84  , "Dedicated File (DF) Name" },
     {0x87  , "Application Priority Indicator" },
@@ -52,15 +52,15 @@ const emv_tag_def_t tag_database[] = {
     {0x93  , "Signed Static Application Data" },
     {0x94  , "Application File Locator (AFL)" },
     {0x95  , "Terminal Verification Results", EMV_TAG_BITMASK, tvr_bits},
-    {0x9a  , "Transaction Date", EMV_TAG_YYMMDD },
+    {0x9a  , "Transaction Date", EMV_TAG_DATE },
     {0x9c  , "Transaction Type" },
     {0x9f02, "Amount, Authorised (Numeric)", EMV_TAG_NUMERIC },
     {0x9f03, "Amount, Other (Numeric)", EMV_TAG_NUMERIC, },
-    {0x9f07, "Application Usage Control", EMV_TAG_BITMASK,  EMV_AUC },
+    {0x9f07, "Application Usage Control", EMV_TAG_BITMASK,  auc_bits },
     {0x9f08, "Application Version Number" },
-    {0x9f0d, "Issuer Action Code - Default", EMV_TAG_BITMASK, EMV_TVR },
-    {0x9f0e, "Issuer Action Code - Denial", EMV_TAG_BITMASK, EMV_TVR },
-    {0x9f0f, "Issuer Action Code - Online", EMV_TAG_BITMASK, EMV_TVR },
+    {0x9f0d, "Issuer Action Code - Default", EMV_TAG_BITMASK, tvr_bits },
+    {0x9f0e, "Issuer Action Code - Denial", EMV_TAG_BITMASK, tvr_bits },
+    {0x9f0f, "Issuer Action Code - Online", EMV_TAG_BITMASK, tvr_bits },
     {0x9f10, "Issuer Application Data" },
     {0x9f11, "Issuer Code Table Index", EMV_TAG_NUMERIC },
     {0x9f12, "Application Preferred Name", EMV_TAG_STRING },
@@ -435,11 +435,14 @@ static const char* bitstrings[] = {
     "...1....", "..1.....", ".1......", "1......."
 };
 
+static bool format_bitmask_callback(void* f, uint16_t bit, const char* name) {
+    fprintf((FILE*)f, "\t%s - %s\n", bitstrings[bit % 8], name);
+    return true;
+}
+
 static void emv_tag_format_bitmask(const tlv_t* tlv, FILE* out) {
-    emv_tag_decode_bitmask(tlv, [](void* f, uint16_t bit, const char* name) {
-        fprintf((FILE*)f, "\t%s - %s\n", bitstrings[bit % 8], name);
-        return true;
-        }, out);
+    emv_tag_decode_bitmask(tlv, format_bitmask_callback, out);
+        
 }
 // Date parsing (YYMMDD format)
 static int emv_tag_parse_date(const tlv_t* tlv, struct tm* date) {

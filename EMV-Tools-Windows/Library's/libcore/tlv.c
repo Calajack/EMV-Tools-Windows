@@ -10,7 +10,7 @@
 #pragma push_macro("BYTE")
 #undef BYTE  /* Undefine Windows.h BYTE */
 
-uint16_t tlv_tag_parse(const uint8_t* buf, size_t len) {
+static uint16_t tlv_tag_parse(const uint8_t* buf, size_t len) {
     /* Original implementation remains valid */
 }
 
@@ -476,26 +476,4 @@ struct tlvdb* tlvdb_decode(const struct tlvdb* tlvdb, tlv_tag_t tag, size_t* len
     memcpy(*buf, tlv->value, tlv->len);
 
     return tlvdb_fixed(tag, *len, *buf);
-}
-
-// Use the emv_tags module for tag names
-static const char* emv_tag_get_name(uint32_t tag)
-{
-    // Look up the tag name in a predefined table
-    for (size_t i = 0; i < sizeof(emv_tags) / sizeof(emv_tags[0]); i++) {
-        if (emv_tags[i].tag == tag)
-            return emv_tags[i].name;
-    }
-    return NULL;
-}
-
-// Use the emv_tags module for tag descriptions
-static const char* emv_tag_get_description(uint32_t tag)
-{
-    // Look up the tag description
-    for (size_t i = 0; i < sizeof(emv_tags) / sizeof(emv_tags[0]); i++) {
-        if (emv_tags[i].tag == tag)
-            return emv_tags[i].description;
-    }
-    return NULL;
 }

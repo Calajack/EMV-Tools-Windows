@@ -9,6 +9,8 @@
 #include <wincrypt.h>
 #include <openssl/bn.h>
 #include <openssl/crypto.h>
+#include <openssl/param_build.h>
+#include <openssl/core_names.h>
 
 // Initialize OpenSSL (call this once at program start)
 bool emv_crypto_init() {
@@ -18,27 +20,45 @@ bool emv_crypto_init() {
 
 // RSA Key Functions
 EMV_RSA_Key emv_rsa_create_key(const unsigned char* modulus, size_t mod_len,
-                              const unsigned char* exponent, size_t exp_len) 
+    const unsigned char* exponent, size_t exp_len)
 {
     EMV_RSA_Key key = { NULL, false };
-    
-    BIGNUM *n = BN_bin2bn(modulus, mod_len, NULL);
-    BIGNUM *e = BN_bin2bn(exponent, exp_len, NULL);
-    
+
+    OSSL_PARAM_BLD* bld = OSSL_PARAM_BLD_new();
+    if (!bld) return key;
+
+    BIGNUM* n = BN_bin2bn(modulus, mod_len, NULL);
+    BIGNUM* e = BN_bin2bn(exponent, exp_len, NULL);
+
     if (n && e) {
-        RSA* rsa = RSA_new();
-        if (rsa && RSA_set0_key(rsa, n, e, NULL)) {
-            EVP_PKEY* pkey = EVP_PKEY_new();
-            if (pkey && EVP_PKEY_assign_RSA(pkey, rsa)) {
-                key.openssl_key = pkey;
-                return key;
+        // Add parameters to the builder
+        if (OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_N, n) &&
+            OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_E, e)) {
+
+            // Create parameter array
+            OSSL_PARAM* params = OSSL_PARAM_BLD_to_param(bld);
+            if (params) {
+                // Create context and key
+                EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+                if (ctx) {
+                    EVP_PKEY* pkey = NULL;
+                    if (EVP_PKEY_fromdata_init(ctx) > 0 &&
+                        EVP_PKEY_fromdata(ctx, &pkey, EVP_PKEY_PUBLIC_KEY, params) > 0) {
+                        key.openssl_key = pkey;
+                        key.is_private = false;
+                    }
+                    EVP_PKEY_CTX_free(ctx);
+                }
+                OSSL_PARAM_free(params);
             }
-            RSA_free(rsa);
         }
-        BN_free(n);
-        BN_free(e);
     }
-    
+
+    // Clean up
+    if (n) BN_free(n);
+    if (e) BN_free(e);
+    OSSL_PARAM_BLD_free(bld);
+
     return key;
 }
 

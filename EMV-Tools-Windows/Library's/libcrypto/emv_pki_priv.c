@@ -11,6 +11,8 @@
 #include <string.h>
 #include <stdarg.h>
 #include <openssl/types.h>
+#include <openssl/param_build.h>
+#include <openssl/core_names.h>
 
 struct emv_pk *emv_pki_make_ca(const EMV_RSA_Key *cp,
         const unsigned char *rid, unsigned char index,
@@ -20,12 +22,14 @@ struct emv_pk *emv_pki_make_ca(const EMV_RSA_Key *cp,
         return NULL;
 
     // Get modulus from RSA key
-    const RSA *rsa = EVP_PKEY_get0_RSA((EVP_PKEY*)cp->openssl_key);
-    if (!rsa)
+    BIGNUM* n = NULL, * e = NULL;
+    if (!EVP_PKEY_get_bn_param((EVP_PKEY*)cp->openssl_key, OSSL_PKEY_PARAM_RSA_N, &n) ||
+        !EVP_PKEY_get_bn_param((EVP_PKEY*)cp->openssl_key, OSSL_PKEY_PARAM_RSA_E, &e) ||
+        !n || !e) {
+        if (n) BN_free(n);
+        if (e) BN_free(e);
         return NULL;
-
-    const BIGNUM *n, *e;
-    RSA_get0_key(rsa, &n, &e, NULL);
+    }
     
     size_t modlen = BN_num_bytes(n);
     size_t explen = BN_num_bytes(e);
@@ -78,6 +82,8 @@ struct emv_pk *emv_pki_make_ca(const EMV_RSA_Key *cp,
 
     memcpy(pk->hash, hash.data, hash.length);
     emv_free_buffer(&hash);
+    BN_free(n);
+    BN_free(e);
 
     return pk;
 }

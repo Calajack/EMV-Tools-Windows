@@ -17,14 +17,14 @@ extern "C" {
 
 
 // EMV Public Key Structure (Windows-optimized)
-typedef struct {
-    uint8_t rid[5];         // Application Provider Identifier
-    uint8_t index;          // Key index
-    uint32_t expiry;        // YYMMDD format
-    EVP_PKEY* pkey;         // OpenSSL key handle
-    uint8_t hash[32];       // SHA-256 max
-    uint8_t hash_algo;      // HASH_SHA1 or HASH_SHA256
-} emv_pk;
+//typedef struct {
+//    uint8_t rid[5];         // Application Provider Identifier
+//    uint8_t index;          // Key index
+//    uint32_t expiry;        // YYMMDD format
+//    EVP_PKEY* pkey;         // OpenSSL key handle
+//    uint8_t hash[32];       // SHA-256 max
+//    uint8_t hash_algo;      // HASH_SHA1 or HASH_SHA256
+//} emv_pk;
 
 // Certificate recovery
 // Fix the function declarations in emv_pki.h
@@ -33,12 +33,12 @@ struct emv_pk* emv_pki_recover_icc_cert(const struct emv_pk* ca_pk, const struct
 struct emv_pk* emv_pki_recover_icc_pe_cert(const struct emv_pk* ca_pk, const struct tlvdb* db);
 
 // Cryptographic operations
-struct emv_pk* emv_pki_perform_cda(const emv_pk* enc_pk,
-                            const struct tlvdb db,
-                            const tlv_t* pdol_data_tlv);
+struct emv_pk* emv_pki_perform_cda(const struct emv_pk* enc_pk,
+    const struct tlvdb db,
+    const tlv_t* pdol_data_tlv);
 
 // Memory management
-void emv_pk_free(emv_pk* pk);
+//void emv_pk_free(emv_pk* pk);
 
 #ifdef __cplusplus
 }

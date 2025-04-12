@@ -77,6 +77,6 @@ void tlvdb_dump(const struct tlvdb *tlvdb, FILE *f);
 
 #ifdef __cplusplus
 }
-#endif
+#endif // tlv.h
 
 #endif

@@ -29,6 +29,7 @@ struct emv_pk {
     unsigned char hash[32]; // Supports SHA-256 now
     unsigned char hash_algo;
     unsigned char pan[10]; // Add this field
+    unsigned char serial[3]; // Add this field
 };
 
 typedef struct emv_pk emv_pk_t;

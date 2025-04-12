@@ -271,7 +271,7 @@ err:
 	return NULL;
 }
 
-bool emv_pk_verify(const struct emv_pk *pk)
+bool emv_pk_verify_alt(const struct emv_pk* pk)
 {
 	struct crypto_hash *ch = crypto_hash_open(pk->hash_algo);
 	if (!ch)

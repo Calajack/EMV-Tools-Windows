@@ -8,6 +8,10 @@
 #define EMV_PK_MAX_EXP_LEN 3
 #define EMV_PK_MAX_MOD_LEN 256
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
     HASH_SHA_1,
     HASH_SHA_256
@@ -33,11 +37,13 @@ struct emv_pk {
 };
 
 typedef struct emv_pk emv_pk_t;
+    struct emv_pk* emv_pk_parse_pk(char* buf);
+    char* emv_pk_dump_pk(const struct emv_pk* pk);
+    bool emv_pk_verify(const struct emv_pk* pk);
+    struct emv_pk* emv_pk_new(size_t modlen, size_t explen);
+    void emv_pk_free(struct emv_pk* pk);
 
-struct emv_pk *emv_pk_parse_pk(char *buf);
-char *emv_pk_dump_pk(const struct emv_pk *pk);
-bool emv_pk_verify(const struct emv_pk *pk);
-struct emv_pk *emv_pk_new(size_t modlen, size_t explen);
-void emv_pk_free(struct emv_pk *pk);
-
+#ifdef __cplusplus
+    extern "C" {
+#endif
 #endif

@@ -27,7 +27,14 @@ extern "C" {
     }
 #endif
 
-
+[AIDs]
+Visa=a0000000031010
+Visa_Electron=a0000000032010
+Mastercard=a0000000041010
+Amex=a000000025010801
+JCB=a0000000651010
+Discover=a0000001523010
+UnionPay=a000000333010101
 
     // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
     // Debug program: F5 or Debug > Start Debugging menu

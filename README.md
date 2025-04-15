@@ -29,3 +29,42 @@ it will store it to memory for future refrence).
 -C++ classes instead of C structs
 -RAII resource management
 
+FILE STRUCTURE: 
+EMV-Tools-Windows/
+├── include/         ----------UNIVERSAL HEADERS
+│   ├── emv/
+│   │   ├── emv_tags.h
+│   │   ├── emv_defs.h
+│   │   ├── emv_commands.h
+│   │   ├── tlv.h
+│   │   └── dol.h
+│   ├── crypto/
+│   │   ├── emv_pk.h
+│   │   └── emv_pki_priv.h
+│   └── scard/
+│       └── scard_common.h
+│       └── apdu.h
+├── libcore/      
+│    ├── x64----------------------------CONTAINS 3D OBJECTS, TLOG'S AND RECIPE
+│    ├── libcore.vcxproj
+│    ├── libcore.vcxproj.filters
+│    └── libcore.vcxproj.user
+├── libcrypto/
+│    ├── x64----------------------------CONTAINS 3D OBJECTS, TLOG'S AND RECIPE
+│    ├── libcrypto.vcxproj
+│    ├── libcrypto.vcxproj.filters
+│    └── libcrypto.vcxproj.user
+├── libscard/
+│    ├── x64----------------------------CONTAINS 3D OBJECTS, TLOG'S AND RECIPE
+│    ├── libscard.vcxproj
+│    ├── libscard.vcxproj.filters
+│    └── libscard.vcxproj.user
+│
+├── libraries/
+     ├── libcore
+     │    ├──  All .c & .h files for libcore
+     ├── libcrypto
+     │    ├──  All .c & .h files for libcrypto
+     └── libscard
+          └──  All .c & .h files for libscard
+

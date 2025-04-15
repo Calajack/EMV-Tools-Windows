@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "scard_common.h"
-#include <winscard_impl.c>
+#include <winscard_impl.c> - CANNOT BE ADDED - C TO C++
 
 #ifdef __cplusplus
 extern "C" {

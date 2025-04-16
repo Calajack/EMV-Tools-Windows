@@ -3,7 +3,9 @@
 
 #include <iostream>
 #include "scard_common.h"
-#include <winscard_impl.c> - CANNOT BE ADDED - C TO C++
+#include "apdu.h"
+#include "winscard_impl.c"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,7 +19,7 @@ extern "C" {
     void InitOmnikey() {
         SCardContext* ctx = scard_establish(SCARD_SCOPE_SYSTEM);
         scard_connect(ctx, "OMNIKEY CardMan 5x21 0", SCARD_SHARE_EXCLUSIVE);
-        scard_omnikey_set_led(ctx, OMNIKEY_LED_GREEN);
+        scard_omnikey_set_led(ctx, OMNIKEY_LED_GREEN); 
     }
 
 
@@ -27,14 +29,18 @@ extern "C" {
     }
 #endif
 
-[AIDs]
-Visa=a0000000031010
-Visa_Electron=a0000000032010
-Mastercard=a0000000041010
-Amex=a000000025010801
-JCB=a0000000651010
-Discover=a0000001523010
-UnionPay=a000000333010101
+    const uint8_t AIDs[][16] = {
+    { 0xA0, 0x00, 0x00, 0x00, 0x03, 0x10, 0x10 }, // Visa Credit
+    { 0xA0, 0x00, 0x00, 0x00, 0x03, 0x20, 0x10 }, // Visa Electron
+    { 0xA0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10 }, // Mastercard Credit/debit
+    { 0xA0, 0x00, 0x00, 0x00, 0x65, 0x10, 0x10 }, // JCB
+    { 0xA0, 0x00, 0x00, 0x25, 0x01, 0x08, 0x01 }, // American Express
+    { 0xA0, 0x00, 0x00, 0x01, 0x52, 0x30, 0x10 }, // Discover
+    { 0xA0, 0x00, 0x03, 0x33, 0x01, 0x01, 0x01 }, // Unionpay
+    };
+
+
+
 
     // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
     // Debug program: F5 or Debug > Start Debugging menu

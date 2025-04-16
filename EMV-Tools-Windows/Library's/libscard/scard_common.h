@@ -12,6 +12,9 @@
 extern "C" {
 #endif
 
+#define MAX_READERS 10
+#define MAX_READERNAME 256
+
 #define OMNIKEY_CTRL_LED     0x42
 #define OMNIKEY_LED_OFF      0x00
 #define OMNIKEY_LED_GREEN    0x01

@@ -10,10 +10,13 @@
 #include "tlv.h"
 #include "dol.h"
 #include "emv_tags.h"
+#include "config_windows.h"
+#include "emv_defs.h"
+#include "utils_windows.h"
 
 // Smart card library includes
 #include "scard_common.h"
-#include "apdu_processing.h"
+#include "apdu.h"
 #include "emv_commands.h"
 
 static void print_hex(const unsigned char *data, size_t len)

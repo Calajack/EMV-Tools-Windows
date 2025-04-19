@@ -1,12 +1,10 @@
-#pragma once
 #ifndef SCARD_COMMON_H
 #define SCARD_COMMON_H
-#endif
+
 #include <windows.h>
 #include <winscard.h>
-#include <stdint.h>  // For uint8_t, already defined here
+#include <stdint.h>
 #include <stdbool.h>
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,9 +17,7 @@ extern "C" {
 #define OMNIKEY_LED_OFF      0x00
 #define OMNIKEY_LED_GREEN    0x01
 
-    int scard_omnikey_set_led(SCARDCONTEXT* ctx, unsigned char* state);
-
-// Error codes (Windows-aligned)
+    // Error codes (Windows-aligned)
 #define SCARD_SUCCESS 0
 #define SCARD_ERR_INVALID_PARAM 0x80100004
 #define SCARD_ERR_NO_SERVICE 0x8010001D
@@ -30,23 +26,45 @@ extern "C" {
 #define APDU_MAX_LEN 256
 #define SW1SW2_OK 0x9000
 
+// Smart card operation modes
     typedef enum {
-        SCARD_MODE_MANUAL,
-        SCARD_MODE_EMU
+        SCARD_MODE_NORMAL = 0,
+        SCARD_MODE_EMULATE,
+        SCARD_MODE_MANUAL
     } SCardMode;
 
-    // Context for EMU mode
+    // Interface types
+    typedef enum {
+        SCARD_IFD_AUTO = 0,
+        SCARD_IFD_ICC,
+        SCARD_IFD_PICC,
+        SCARD_IFD_MANUAL
+    } SCardInterfaceType;
+
+    // Emulator context
     typedef struct {
-        uint8_t(*emulate_cb)(const uint8_t* apdu, size_t apdu_len, uint8_t* resp, size_t* resp_len);
+        uint8_t(*emulate_cb)(const uint8_t* apdu, size_t apdu_len,
+            uint8_t* resp, size_t* resp_len);
     } SCardEmuContext;
 
-    // Context for MANUAL mode (define fields as needed)
+    // Manual context
     typedef struct {
-        // Placeholder for manual mode state
+        uint8_t atr[32];
+        size_t atr_len;
+        uint8_t responses[16][256];
+        size_t resp_lens[16];
+        size_t resp_count;
         int dummy;
     } SCardManualContext;
 
-    // Unified context structure
+    // Reader state
+    typedef struct {
+        char reader_name[256];
+        DWORD state;
+        DWORD protocol;
+    } SCardReaderState;
+
+    // Context structure
     typedef struct {
         SCARDCONTEXT hContext;
         SCARDHANDLE hCard;
@@ -55,14 +73,26 @@ extern "C" {
         size_t atr_len;
     } SCardContext;
 
-    // Reader state (you may have this already)
+    // Bridge structure used in the application code
     typedef struct {
-        char reader_name[256];
-        DWORD state;
-        DWORD protocol;
-    } SCardReaderState;
+        SCARDCONTEXT hContext;
+        SCARDHANDLE hCard;
+        DWORD dwActiveProtocol;
+    } sc;
 
-    // Function declarations
+    // Function declarations for Windows PC/SC integration
+    int scard_omnikey_set_led(SCARDCONTEXT* ctx, unsigned char* state);
+
+    // Original API functions
+    int scard_establish_context(sc** out);
+    int scard_release_context(sc* sc_ctx);
+    int scard_list_readers(sc* sc_ctx, char readers[][256], DWORD* readers_len);
+    int scard_connect(sc* sc_ctx, const char* reader, DWORD share_mode, DWORD* active_protocol);
+    int scard_disconnect(sc* sc_ctx);
+    int scard_transmit(sc* sc_ctx, const unsigned char* send_buf, size_t send_len,
+        unsigned char* recv_buf, size_t* recv_len);
+
+    // Newer API functions
     SCardContext* scard_establish(DWORD scope);
     int scard_connect(SCardContext* ctx, LPCSTR reader, DWORD share_mode, DWORD preferred_protocols);
     int scard_disconnect(SCardContext* ctx);
@@ -77,48 +107,8 @@ extern "C" {
     int scard_set_mode(SCardMode mode);
     int scard_set_emu_callback(uint8_t(*cb)(const uint8_t*, size_t, uint8_t*, size_t*));
 
-typedef enum {
-    SCARD_IFD_AUTO = 0,    // Automatic detection
-    SCARD_IFD_ICC,         // Chip (contact)
-    SCARD_IFD_PICC,        // Contactless
-    SCARD_IFD_MANUAL       // Manual entry mode
-} SCardInterfaceType;
-
-// Reader state structure
-typedef struct {
-    char reader_name[128];
-    DWORD state;
-    DWORD protocol;
-} SCardReaderState;
-
-// Manual input structure
-typedef struct {
-    uint8_t atr[32];
-    size_t atr_len;
-    uint8_t responses[16][256]; // Queue for manual responses
-    size_t resp_lens[16];
-    size_t resp_count;
-} SCardManualContext;
-
-typedef struct {
-    SCARDCONTEXT hContext;
-    SCARDHANDLE hCard;
-    DWORD dwProtocol;
-    uint8_t atr[32];
-    size_t atr_len;
-} SCardContext;
-
-typedef enum {
-    SCARD_MODE_NORMAL = 0,
-    SCARD_MODE_EMULATE,
-    SCARD_MODE_MANUAL
-} SCardMode;
-
-typedef struct {
-    uint8_t (*emulate_cb)(const uint8_t *apdu, size_t apdu_len, 
-                         uint8_t *resp, size_t *resp_len);
-} SCardEmuContext;
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* SCARD_COMMON_H */

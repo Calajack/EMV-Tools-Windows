@@ -17,7 +17,7 @@ extern "C" {
 #define OMNIKEY_LED_OFF      0x00
 #define OMNIKEY_LED_GREEN    0x01
 
-    // Error codes (Windows-aligned)
+// Error codes (Windows-aligned)
 #define SCARD_SUCCESS 0
 #define SCARD_ERR_INVALID_PARAM 0x80100004
 #define SCARD_ERR_NO_SERVICE 0x8010001D
@@ -27,77 +27,83 @@ extern "C" {
 #define SW1SW2_OK 0x9000
 
 // Interface types
-    typedef enum {
-        SCARD_IFD_AUTO = 0,
-        SCARD_IFD_ICC,
-        SCARD_IFD_PICC,
-        SCARD_IFD_MANUAL
-    } SCardInterfaceType;
+typedef enum {
+    SCARD_IFD_AUTO = 0,
+    SCARD_IFD_ICC,
+    SCARD_IFD_PICC,
+    SCARD_IFD_MANUAL
+} SCardInterfaceType;
 
-    // Smart card operation modes
-    typedef enum {
-        SCARD_MODE_NORMAL = 0,
-        SCARD_MODE_EMULATE,
-        SCARD_MODE_MANUAL
-    } SCardMode;
+// Smart card operation modes
+typedef enum {
+    SCARD_MODE_NORMAL = 0,
+    SCARD_MODE_EMULATE,
+    SCARD_MODE_MANUAL
+} SCardMode;
 
-    // Main SC structure - this is used by application code
+// The sc struct that the application code expects
 #ifndef SC_STRUCT_DEFINED
 #define SC_STRUCT_DEFINED
-    typedef struct sc {
-        SCARDCONTEXT hContext;
-        SCARDHANDLE hCard;
-        DWORD dwActiveProtocol;
-    } sc;
+typedef struct sc {
+    SCARDCONTEXT hContext;
+    SCARDHANDLE hCard;
+    DWORD dwActiveProtocol;
+} sc;
 #endif
 
-    // Emulator context
-    typedef struct {
-        uint8_t(*emulate_cb)(const uint8_t* apdu, size_t apdu_len,
-            uint8_t* resp, size_t* resp_len);
-    } SCardEmuContext;
+// Emulator context
+typedef struct {
+    uint8_t (*emulate_cb)(const uint8_t *apdu, size_t apdu_len, 
+                         uint8_t *resp, size_t *resp_len);
+} SCardEmuContext;
 
-    // Manual context
-    typedef struct {
-        uint8_t atr[32];
-        size_t atr_len;
-        uint8_t responses[16][256];
-        size_t resp_lens[16];
-        size_t resp_count;
-        int dummy;
-    } SCardManualContext;
+// Manual context
+typedef struct {
+    uint8_t atr[32];
+    size_t atr_len;
+    uint8_t responses[16][256];
+    size_t resp_lens[16];
+    size_t resp_count;
+    int dummy;
+} SCardManualContext;
 
-    // Reader state
-    typedef struct {
-        char reader_name[256];
-        DWORD state;
-        DWORD protocol;
-    } SCardReaderState;
+// Reader state
+typedef struct {
+    char reader_name[256];
+    DWORD state;
+    DWORD protocol;
+} SCardReaderState;
 
-    // Context structure
-    typedef struct {
-        SCARDCONTEXT hContext;
-        SCARDHANDLE hCard;
-        DWORD dwProtocol;
-        uint8_t atr[64];
-        size_t atr_len;
-    } SCardContext;
+// Context structure
+typedef struct {
+    SCARDCONTEXT hContext;
+    SCARDHANDLE hCard;
+    DWORD dwProtocol;
+    uint8_t atr[64];
+    size_t atr_len;
+} SCardContext;
 
-    // Function declarations
-    int scard_omnikey_set_led(SCARDCONTEXT* ctx, unsigned char* state);
+// Function declarations
+int scard_omnikey_set_led(SCardContext* ctx, unsigned char* state);
 
-    // Low-level PC/SC functions using the 'sc' struct
-    int scard_establish_context(sc** out);
-    int scard_release_context(sc* sc_ctx);
-    int scard_list_readers(sc* sc_ctx, char readers[][256], DWORD* readers_len);
-    int scard_connect(sc* sc_ctx, const char* reader, DWORD share_mode, DWORD* active_protocol);
-    int scard_disconnect(sc* sc_ctx);
-    int scard_transmit(sc* sc_ctx, const unsigned char* send_buf, size_t send_len,
-        unsigned char* recv_buf, size_t* recv_len);
+// Add scard_establish for EMV-Tools_Win.cpp
+SCardContext* scard_establish(DWORD scope);
 
-    // EMU mode functions
-    int scard_set_mode(SCardMode mode);
-    int scard_set_emu_callback(uint8_t(*cb)(const uint8_t*, size_t, uint8_t*, size_t*));
+// Low-level PC/SC functions using the 'sc' struct
+int scard_establish_context(sc **out);
+int scard_release_context(sc *sc_ctx);
+int scard_list_readers(sc *sc_ctx, char readers[][256], DWORD *readers_len);
+int scard_connect(sc *sc_ctx, const char *reader, DWORD share_mode, DWORD *active_protocol);
+int scard_disconnect(sc *sc_ctx);
+int scard_transmit(sc *sc_ctx, const unsigned char *send_buf, size_t send_len, 
+                  unsigned char *recv_buf, size_t *recv_len);
+
+// Update connect signature to match what EMV-Tools_Win.cpp expects
+int scard_connect(SCardContext* ctx, const char* reader, DWORD share_mode);
+
+// EMU mode functions
+int scard_set_mode(SCardMode mode);
+int scard_set_emu_callback(uint8_t(*cb)(const uint8_t*, size_t, uint8_t*, size_t*));
 
 #ifdef __cplusplus
 }

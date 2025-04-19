@@ -9,7 +9,6 @@
 extern "C" {
 #endif
 
-    struct sc;
 
 // APDU command structure
 struct apdu_cmd {

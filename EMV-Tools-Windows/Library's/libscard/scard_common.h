@@ -73,17 +73,18 @@ typedef struct {
     size_t atr_len;
 } SCardContext;
 
-// Bridge structure used in the application code
+// The sc struct that the application code expects
+// This needs to be defined before any function declarations that use it
 typedef struct {
     SCARDCONTEXT hContext;
     SCARDHANDLE hCard;
     DWORD dwActiveProtocol;
 } sc;
 
-// Function declarations - this matches what the applications expect
+// Function declarations
 int scard_omnikey_set_led(SCARDCONTEXT* ctx, unsigned char* state);
 
-// EMV tool PC/SC compatibility functions
+// Low-level PC/SC functions using the 'sc' struct
 int scard_establish_context(sc **out);
 int scard_release_context(sc *sc_ctx);
 int scard_list_readers(sc *sc_ctx, char readers[][256], DWORD *readers_len);

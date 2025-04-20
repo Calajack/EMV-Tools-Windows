@@ -56,15 +56,30 @@ EMV-Tools-Windows/
 │         └──  All .c & .h files for libscard
 ├── Tools/
 │    ├── EMV_CAP/
-│    │    ├── x64 - EMV_CAP.vcxproj - EMV_CAP.vcxproj.filetrs - EMV_CAP.vcxproj.user
+│    │    ├── x64----------------------------------
+│    │    ├── EMV_CAP.vcxproj
+│    │    ├── EMV_CAP.vcxproj.filetrs
+│    │    └──EMV_CAP.vcxproj.user
 │    ├── EMV_CL_CDA/
-│    │    ├── x64 - EMV_CL_CDA.vcxproj - EMV_CL_CDA.vcxproj.filetrs - EMV_CL_CDA.vcxproj.user
+│    │    ├── x64----------------------------------
+│    │    ├── EMV_CL_CDA.vcxproj
+│    │    ├── EMV_CL_CDA.vcxproj.filetrs
+│    │    └──EMV_CL_CDA.vcxproj.user
 │    ├── EMV_DDA/
-│    │    ├── x64 - EMV_DDA.vcxproj - EMV_DDA.vcxproj.filetrs - EMV_DDA.vcxproj.user
+│    │    ├── x64----------------------------------
+│    │    ├── EMV_DDA.vcxproj
+│    │    ├── EMV_DDA.vcxproj.filetrs
+│    │    └──EMV_DDA.vcxproj.user
 │    ├── EMV_DUMP/
-│    │    ├── x64 - EMV_DUMP.vcxproj - EMV_DUMP.vcxproj.filetrs - EMV_DUMP.vcxproj.user
+│    │    ├── x64----------------------------------
+│    │    ├── EMV_DUMP.vcxproj
+│    │    ├── EMV_DUMP.vcxproj.filetrs
+│    │    └──EMV_DUMP.vcxproj.user
 │    ├──  EMV_SDA/
-│    │    └── x64 - EMV_SDA.vcxproj - EMV_SDA.vcxproj.filetrs - EMV_SDA.vcxproj.user
+│    │    ├── x64----------------------------------
+│    │    ├── EMV_SDA.vcxproj
+│    │    ├── EMV_SDA.vcxproj.filetrs
+│    │    └──EMV_SDA.vcxproj.user
 │    ├── emv_cap.c
 │    ├── emv_cl_cda.c
 │    ├── emv_dda.c

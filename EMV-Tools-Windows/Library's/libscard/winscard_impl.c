@@ -5,6 +5,10 @@
 #include <windows.h>
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SCARD_CHECK(fn, ...) \
     do { \
         LONG __rc = (fn)(__VA_ARGS__); \
@@ -14,7 +18,7 @@
     } while(0)
 
 SCardContext* scard_establish(DWORD scope) {
-    SCardContext *ctx = calloc(1, sizeof(SCardContext));
+    SCardContext* ctx = (SCardContext*)calloc(1, sizeof(SCardContext));
     if (!ctx) return NULL;
 
     LONG rc = SCardEstablishContext(scope, NULL, NULL, &ctx->hContext);

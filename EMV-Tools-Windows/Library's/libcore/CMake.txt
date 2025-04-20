@@ -2,12 +2,22 @@ cmake_minimum_required(VERSION 3.15)
 project(libcore)
 
 add_library(libcore STATIC
+    config.c
+    config_windows.c
+    dol.c
+    emv_commands.c
+    emv_defs.c
     emv_pki.c
     emv_tags.c
-    tlv_parser.c
-    commands.c
+    tlv.c
+    utils_windows.c
 )
 
-target_include_directories(libcore PUBLIC ${CMAKE_SOURCE_DIR}/include)
-find_package(OpenSSL REQUIRED)
-target_link_libraries(libcore OpenSSL::SSL OpenSSL::Crypto)
+target_include_directories(libcore PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_link_libraries(libcore
+    libscard
+    libcrypto
+)

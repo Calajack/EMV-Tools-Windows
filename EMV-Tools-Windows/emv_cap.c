@@ -526,12 +526,13 @@ static void print_usage(void)
     printf("  -r, --reader INDEX    Use specific reader by index\n");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-    const char *aid_str = NULL;
-    const char *value_str = NULL;
+    const char* aid_str = NULL;
+    const char* value_str = NULL;
     int reader_index = -1;
     bool use_pin = false;
+
     
     // Parse command line arguments
     for (int i = 1; i < argc; i++) {
@@ -569,7 +570,7 @@ int main(int argc, char **argv)
     }
 
     // List available readers
-    char reader_names[MAX_READERS][MAX_READERNAME];
+    char reader_names[MAX_READERS][MAX_READERNAME]; {};
     DWORD readers_count = 0;
     if (!scard_list_readers(hContext, reader_names, &readers_count, MAX_READERS, MAX_READERNAME)) {
     printf("Failed to list readers\n");
@@ -606,7 +607,7 @@ int main(int argc, char **argv)
 printf("Using reader: %s\n", reader_names[selected_reader]);
 
  // Connect to card
-   SCARDHANDLE hCard;
+   SCARDHANDLE hCard= 0;
     DWORD dwActiveProtocol;
     result = scard_connect(hContext, reader_names[selected_reader], &hCard, &dwActiveProtocol);
     if (result != SCARD_S_SUCCESS) {

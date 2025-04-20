@@ -1,10 +1,11 @@
 // EMV-Tools_Win.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
+#include <winscard.h>
 #include <iostream>
 #include "scard_common.h"
 #include "apdu.h"
-#include "winscard_impl.c"
+
+
 
 
 #ifdef __cplusplus

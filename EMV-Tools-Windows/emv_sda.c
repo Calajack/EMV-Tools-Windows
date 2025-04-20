@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <winscard.h>
 #include <time.h>
 
 // Core library includes
@@ -607,7 +608,7 @@ int main(int argc, char **argv)
         
         // Connect to card
         SCARDHANDLE hCard;
-        DWORD dwActiveProtocol;
+        DWORD dwActiveProtocol= 0;
         result = scard_connect(hContext, reader_names[selected_reader], &hCard, &dwActiveProtocol);
         if (result != SCARD_S_SUCCESS) {
             printf("Failed to connect to card: %s\n", pcsc_stringify_error(result));

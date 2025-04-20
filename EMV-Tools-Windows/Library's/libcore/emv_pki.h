@@ -4,10 +4,10 @@
 #include "emv_pk.h"
 #include "emv_tags.h"
 #include "emv_defs.h"
-#include "crypto_windows.h"
 #include "tlv.h"
 #include <openssl/evp.h>
 #include <stdint.h>
+#include "crypto_windows.h"
 
 #ifdef __cplusplus
 extern "C" {

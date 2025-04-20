@@ -90,13 +90,12 @@ extern "C" {
     SCardContext* scard_establish(DWORD scope);
 
     // Low-level PC/SC functions using the 'sc' struct
-    int scard_establish_context(sc** out);
-    int scard_release_context(sc* sc_ctx);
-    int scard_list_readers(sc* sc_ctx, char readers[][256], DWORD* readers_len);
-    int scard_connect(sc* sc_ctx, const char* reader, DWORD share_mode, DWORD* active_protocol);
-    int scard_disconnect(sc* sc_ctx);
-    int scard_transmit(sc* sc_ctx, const unsigned char* send_buf, size_t send_len,
-        unsigned char* recv_buf, size_t* recv_len);
+    bool scard_list_readers(SCARDCONTEXT hContext, char readers[][MAX_READERNAME], DWORD* reader_count, size_t max_readers, size_t max_len);
+    LONG scard_establish_context(SCARDCONTEXT* ctx);
+    void scard_release_context(SCARDCONTEXT ctx);
+    LONG scard_connect(SCARDCONTEXT ctx, const char* reader, SCARDHANDLE* card, DWORD* protocol);
+    void scard_disconnect(SCARDHANDLE card, DWORD disposition);
+    const char* pcsc_stringify_error(LONG code);
 
     // Update connect signature to match what EMV-Tools_Win.cpp expects
     int scard_connect(SCardContext* ctx, const char* reader, DWORD share_mode);

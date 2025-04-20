@@ -4,11 +4,13 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include "scard_common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+   
 
 // APDU command structure
 struct apdu_cmd {

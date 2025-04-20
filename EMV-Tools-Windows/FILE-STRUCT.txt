@@ -2,22 +2,22 @@ FILE STRUCTURE:
 EMV-Tools-Windows/
 ├── EMV-Tools-Windows/
 │   ├── EMV-Tools-Windows/ - All tlog files
-│   ├── x64/Debug
-│   │    ├── EMV_SDA.pdb
-│   │    ├── libcore.idb
-│   │    ├── libcore.lib
-│   │    ├── libcore.pdb
-│   │    ├── libcrypto.idb
-│   │    ├── libcrypto.lib
-│   │    ├── libcrypto.pdb
-│   │    ├── libscard.idb
-│   │    ├── libscard.lib
-│   │    └── libscard.pdb
+│   │    └── x64/Debug
+│   │         ├── EMV_SDA.pdb
+│   │         ├── libcore.idb
+│   │         ├── libcore.lib
+│   │         ├── libcore.pdb
+│   │         ├── libcrypto.idb
+│   │         ├── libcrypto.lib
+│   │         ├── libcrypto.pdb
+│   │         ├── libscard.idb
+│   │         ├── libscard.lib
+│   │         └── libscard.pdb
 │   ├── EMV-Tools-Windows.cpp
 │   ├── EMV-Tools-Windows.sln
 │   ├── EMV-Tools-Windows.vcxproj
 │   ├── EMV-Tools-Windows.vcxproj.filters
-│   ├── EMV-Tools-Windows.vcxproj.filters.user
+│   └── EMV-Tools-Windows.vcxproj.filters.user
 ├── include/         ----------UNIVERSAL HEADERS
 │   ├── emv/
 │   │   ├── emv_tags.h

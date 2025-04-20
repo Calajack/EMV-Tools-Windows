@@ -23,7 +23,7 @@ int scard_transmit_ex(SCardContext *ctx,
 }
 
 // Omnikey-specific direct control
-int scard_omnikey_set_led(SCardContext *ctx, uint8_t led_state) {
+static int scard_omnikey_set_led(SCardContext *ctx, uint8_t led_state) {
     if (!ctx) return SCARD_E_INVALID_PARAMETER;
     
     const uint8_t ctrl_code = 0x42;  // Omnikey LED control

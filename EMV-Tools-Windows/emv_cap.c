@@ -46,6 +46,7 @@ static void print_tlv(const struct tlv *tlv)
     printf("\n");
 }
 
+
 // Parse the transaction value (amount)
 static unsigned long long parse_value(const char *value_str)
 {
@@ -526,108 +527,111 @@ static void print_usage(void)
     printf("  -r, --reader INDEX    Use specific reader by index\n");
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
+    return emv_cap_main(argc, argv);
     const char* aid_str = NULL;
     const char* value_str = NULL;
     int reader_index = -1;
     bool use_pin = false;
 
-    
     // Parse command line arguments
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
             print_usage();
             return 0;
-        } else if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--aid") == 0) {
-            if (i + 1 < argc)
-                aid_str = argv[++i];
-        } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--value") == 0) {
-            if (i + 1 < argc)
-                value_str = argv[++i];
-        } else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--pin") == 0) {
+        }
+        else if ((strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--aid") == 0) && i + 1 < argc) {
+            aid_str = argv[++i];
+        }
+        else if ((strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--value") == 0) && i + 1 < argc) {
+            value_str = argv[++i];
+        }
+        else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--pin") == 0) {
             use_pin = true;
-        } else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--reader") == 0) {
-            if (i + 1 < argc)
-                reader_index = atoi(argv[++i]);
+        }
+        else if ((strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--reader") == 0) && i + 1 < argc) {
+            reader_index = atoi(argv[++i]);
         }
     }
-    
+
     // Default AID if not specified
     if (!aid_str) {
         aid_str = "a0000000031010"; // Visa
     }
-    
+
     // Initialize EMV configuration
     emv_config_init(NULL);
-    
+
     // Initialize card readers
     SCARDCONTEXT hContext;
     LONG result = scard_establish_context(&hContext);
     if (result != SCARD_S_SUCCESS) {
-    printf("Failed to establish smart card context: %s\n", pcsc_stringify_error(result));
-    return 1;
+        printf("Failed to establish smart card context: %s\n", pcsc_stringify_error(result));
+        return 1;
     }
 
     // List available readers
-    char reader_names[MAX_READERS][MAX_READERNAME]; {};
+    char reader_names[MAX_READERS][MAX_READERNAME] = { {0} };
     DWORD readers_count = 0;
     if (!scard_list_readers(hContext, reader_names, &readers_count, MAX_READERS, MAX_READERNAME)) {
-    printf("Failed to list readers\n");
-    scard_release_context(hContext);
-    return 1;
+        printf("Failed to list readers\n");
+        scard_release_context(hContext);
+        return 1;
     }
 
     if (readers_count == 0) {
-    printf("No readers found\n");
-    scard_release_context(hContext);
-    return 1;
+        printf("No readers found\n");
+        scard_release_context(hContext);
+        return 1;
     }
 
     // Display available readers
     printf("Available readers:\n");
     for (DWORD i = 0; i < readers_count; i++) {
-    printf("%lu: %s\n", i, reader_names[i]);
+        printf("%lu: %s\n", i, reader_names[i]);
     }
 
     // Select reader
     DWORD selected_reader = 0;
     if (reader_index >= 0 && reader_index < readers_count) {
-    selected_reader = reader_index;
-    } else if (readers_count > 1) {
-    printf("Select reader (0-%lu): ", readers_count - 1);
-    char input[10] = {0};
-    if (fgets(input, sizeof(input), stdin)) {
-        selected_reader = atoi(input);
-        if (selected_reader >= readers_count)
-            selected_reader = 0;
+        selected_reader = reader_index;
     }
-}
+    else if (readers_count > 1) {
+        printf("Select reader (0-%lu): ", readers_count - 1);
+        char input[10] = { 0 };
+        if (fgets(input, sizeof(input), stdin)) {
+            selected_reader = atoi(input);
+            if (selected_reader >= readers_count) {
+                selected_reader = 0;
+            }
+        }
+    }
 
-printf("Using reader: %s\n", reader_names[selected_reader]);
+    printf("Using reader: %s\n", reader_names[selected_reader]);
 
- // Connect to card
-   SCARDHANDLE hCard= 0;
+    // Connect to card
+    SCARDHANDLE hCard = 0;
     DWORD dwActiveProtocol;
     result = scard_connect(hContext, reader_names[selected_reader], &hCard, &dwActiveProtocol);
     if (result != SCARD_S_SUCCESS) {
-    printf("Failed to connect to card: %s\n", pcsc_stringify_error(result));
-    scard_release_context(hContext);
-    return 1;
+        printf("Failed to connect to card: %s\n", pcsc_stringify_error(result));
+        scard_release_context(hContext);
+        return 1;
     }
 
     // Create sc structure that's compatible with emv_commands functions
     struct sc scard = {
-    .hContext = hContext,
-    .hCard = hCard,
-    .dwActiveProtocol = dwActiveProtocol
+        .hContext = hContext,
+        .hCard = hCard,
+        .dwActiveProtocol = dwActiveProtocol
     };
 
-// Process CAP transaction
-bool success = process_cap_transaction(&scard, aid_str, value_str, use_pin);
+    // Process CAP transaction
+    bool success = process_cap_transaction(&scard, aid_str, value_str, use_pin);
 
-// Cleanup
-scard_disconnect(hCard, SCARD_LEAVE_CARD);
-scard_release_context(hContext);
+    // Cleanup
+    scard_disconnect(hCard, SCARD_LEAVE_CARD);
+    scard_release_context(hContext);
 
-return success ? 0 : 1;
+    return success ? 0 : 1;
+}

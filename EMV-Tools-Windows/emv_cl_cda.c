@@ -13,6 +13,7 @@
 #include "config_windows.h"
 #include "emv_defs.h"
 #include "utils_windows.h"
+#include "emv_pki_priv.h"
 
 // Crypto library includes
 #include "crypto_windows.h"
@@ -23,6 +24,7 @@
 #include "scard_common.h"
 #include "apdu.h"
 #include "emv_commands.h"
+#include "winscard_impl.c"
 
 static void print_hex(const unsigned char *data, size_t len)
 {

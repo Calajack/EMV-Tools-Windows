@@ -36,7 +36,7 @@ EMV-Tools-Windows/
 │    ├── libcore.vcxproj
 │    ├── libcore.vcxproj.filters
 │    └── libcore.vcxproj.user
-├── libcrypto/
+├── libcrypto-emv/
 │    ├── x64----------------------------CONTAINS 3D OBJECTS, TLOG'S AND RECIPE
 │    ├── libcrypto.vcxproj
 │    ├── libcrypto.vcxproj.filters
@@ -50,7 +50,7 @@ EMV-Tools-Windows/
 ├── libraries/
 │    ├── libcore/
 │    │    ├──  All .c & .h files for libcore
-│    ├── libcrypto/
+│    ├── libcrypto-emv/
 │    │    ├──  All .c & .h files for libcrypto
 │    └── libscard/
 │         └──  All .c & .h files for libscard

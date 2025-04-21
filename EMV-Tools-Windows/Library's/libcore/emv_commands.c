@@ -1,5 +1,6 @@
 // emv_commands.c - High-level EMV command implementations
 #include "emv_commands.h"
+#include "emv_file_utils.h"
 #include "scard_common.h"
 #include "apdu.h"  // Make sure this can be found
 #include "tlv.h"

@@ -1,6 +1,7 @@
 #include "emv_pki.h"
 #include "emv_pk.h"
 #include "crypto_windows.h"
+#include "emv_certificate_ops.h"
 #include "tlv.h"
 #include <stdlib.h>
 #include <string.h>

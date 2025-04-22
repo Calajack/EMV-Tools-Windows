@@ -56,7 +56,7 @@ EMV-Tools-Windows/
 │         └──  All .c & .h files for libscard
 ├── Tools/
 │    ├── EMV_CAP/
-│    │    ├── x64----------------------------------
+│    │    ├── x64---------------------------------- EMV_CAP.exe.recipe / EMV_CAP - 3D Object ETC
 │    │    ├── EMV_CAP.vcxproj
 │    │    ├── EMV_CAP.vcxproj.filetrs
 │    │    └──EMV_CAP.vcxproj.user
@@ -86,3 +86,189 @@ EMV-Tools-Windows/
 │    ├── emv_dump.c
 │    └── emv_sda.c
 ****************************************************************************************************************************************************************************************************************
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcore
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto-emv
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libscard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+************************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+***********************************************************************(AdditionalLibraryDirectories)
+
+libcore.lib
+libscard.lib
+libcrypto-emv.lib
+Winscard.lib
+***********************************************************************(AdditionalDependencies)
+*LIBSCARD.LIB - LIBCORE.LIB - LIBCRYPTO-EMV   BUILD DEPENEDENCIES* ============================EMV_CAP - TOOL
+
+
+
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcore
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto-emv
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libscard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+*********************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+********************************************************************(AdditionalLibraryDirectories)
+
+libcore.lib
+libscard.lib
+libcrypto-emv.lib
+Winscard.lib
+**********************************************************************(AdditionalDependencies)
+*LIBSCARD.LIB - LIBCORE.LIB - LIBCRYPTO-EMV   BUILD DEPENEDENCIES* ===========================EMV_CL_CDA - TOOL
+
+
+
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcore
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto-emv
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libscard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+*********************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+**********************************************************************(AdditionalLibraryDirectories)
+
+libcore.lib
+libscard.lib
+libcrypto-emv.lib
+Winscard.lib
+************************************************************************(AdditionalDepedencies)
+*LIBSCARD.LIB - LIBCORE.LIB - LIBCRYPTO-EMV   BUILD DEPENEDENCIES* ==================================EMV_DDA - TOOL
+
+
+
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcore
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto-emv
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libscard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+****************************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+******************************************************************************(AdditionalLibraryDirectories)
+
+libcore.lib
+libscard.lib
+libcrypto-emv.lib
+Winscard.lib
+****************************************************************************(AdditionalDependencies)
+*LIBSCARD.LIB - LIBCORE.LIB - LIBCRYPTO-EMV   BUILD DEPENEDENCIES* ==================================EMV_DUMP - TOOL
+
+
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcore
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libscard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+*************************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+***************************************************************************(AdditionalLibraryDirectories)
+
+libcore.lib
+libscard.lib
+libcrypto-emv.lib
+Winscard.lib
+****************************************************************************(AdditionalDependencies)
+*LIBSCARD.LIB - LIBCORE.LIB - LIBCRYPTO-EMV   BUILD DEPENEDENCIES* ==================================EMV_SDA - TOOL
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcore
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libscard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+**********************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+*********************************************************************(AdditionalLibraryDirectories)
+
+libcore.lib
+libscard.lib
+libcrypto-emv.lib
+Winscard.lib
+*******************************************************************(AdditionalDependencies)
+*LIBSCARD.LIB - LIBCORE.LIB - LIBCRYPTO-EMV   BUILD DEPENEDENCIES* ===============================EMV-Tools_Win (main .cpp)
+
+
+
+
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto-emv
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+*******************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+********************************************************************(AdditionalLibraryDirectories)
+libscard.lib
+libcrypto-emv.lib
+libssl.lib
+*******************************************************************(AdditionalDependencies)
+*LIBSCARD.LIB - BUILD DEPENEDENCIES* ==================================================================LIBCORE - LIBRARY
+
+
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\crypto
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcrypto-emv
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libcore
+C:\Users\Work\Documents\EMV-Tools-Windows\Libraries\libscard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+*****************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Documents\EMV-Tools-Windows\Static-lib
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+*****************************************************************(AdditionalLibraryDirectories)
+
+libcore.lib
+libscard.lib
+libssl.lib
+libcrypto-emv.lib
+*********************************************************************(AdditionalDependencies)
+*LIBSCARD.LIB & LIBCORE.LIB - BUILD DEPENEDENCIES* =====================================================LIBCRYPTO-EMV - LIBRARY
+
+
+
+C:\Users\Work\Documents\EMV-Tools-Windows\include\emv
+C:\Users\Work\Documents\EMV-Tools-Windows\include\scard
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\include
+*********************************************************************(AdditionalIncludeDirectories)
+
+C:\Users\Work\Downloads\vcpkg-master\vcpkg-master\installed\x64-windows\lib
+*********************************************************************(AdditionalLibraryDirectories)
+
+Winscard.lib
+*******************************************************************(AdditionalDependencies)
+*NO BUILD DEPENEDENCIES*============================================================================LIBSCARD - LIBRARY

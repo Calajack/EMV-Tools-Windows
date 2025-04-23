@@ -13,15 +13,17 @@
 #include "emv_commands.h"
 #include "emv_defs.h"
 #include "emv_pki.h"
+#include "emv_operations.h"
+#include "emv_file_utils.h"
 
 // Crypto library includes
 #include "crypto_windows.h"
+#include "crypto_hash.h"
 #include "emv_pk.h"
 #include "emv_pki_priv.h"
 
 // Smart card library includes
 #include "scard_common.h"
-#include "apdu_processing.c"
 #include "apdu.h"
 
 
@@ -528,7 +530,6 @@ static void print_usage(void)
 }
 
 int main(int argc, char** argv) {
-    return emv_cap_main(argc, argv);
     const char* aid_str = NULL;
     const char* value_str = NULL;
     int reader_index = -1;

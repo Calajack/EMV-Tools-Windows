@@ -1,3 +1,10 @@
+#ifdef _MSC_VER
+#pragma comment(lib, "libcrypto-emv.lib")
+#pragma comment(lib, "libcore.lib")
+#pragma comment(lib, "libscard.lib")
+#pragma comment(lib, "Winscard.lib")
+#endif
+
 // emv_dump.c - EMV Card Data Dump Tool
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +20,9 @@
 #include "config_windows.h"
 #include "emv_defs.h"
 #include "utils_windows.h"
+#include "emv_operations.h"
+#include "emv_file_utils.h"
+#include "crypto_hash.h"
 
 // Smart card library includes
 #include "scard_common.h"

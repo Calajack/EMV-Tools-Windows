@@ -13,9 +13,12 @@
 #include "config_windows.h"
 #include "emv_defs.h"
 #include "utils_windows.h"
+#include "emv_operations.h"
+#include "emv_file_utils.h"
 
 // Crypto library includes
 #include "crypto_windows.h"
+#include "crypto_hash.h"
 #include "emv_pk.h"
 #include "emv_pki.h"
 

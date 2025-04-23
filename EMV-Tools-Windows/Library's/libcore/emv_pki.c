@@ -36,121 +36,111 @@ static struct emv_pk *emv_pki_decode_key(const struct tlvdb *db, tlv_tag_t tag, 
     return pk;
 }
 
-static struct emv_pk *emv_pki_recover_issuer_cert(const struct emv_pk *pk, const struct tlvdb *db) 
-{
-    const struct tlv *issuer_cert_tlv = tlvdb_get(db, 0x90, 0);
-    const struct tlv *issuer_rem_tlv = tlvdb_get(db, 0x92, NULL);
-    const struct tlv *issuer_exp_tlv = tlvdb_get(db, 0x9F32, NULL);
-    
-    if (!pk || !pk->modulus || !issuer_cert_tlv || !issuer_exp_tlv)
+struct emv_pk* emv_pki_recover_issuer_cert(const struct emv_pk* ca_pk, const struct tlvdb* db) {
+    const struct tlv* issuer_cert_tlv = tlvdb_get(db, 0x90, NULL);
+    const struct tlv* issuer_rem_tlv = tlvdb_get(db, 0x92, NULL);
+    const struct tlv* issuer_exp_tlv = tlvdb_get(db, 0x9F32, NULL);
+
+    if (!ca_pk || !ca_pk->modulus || !issuer_cert_tlv || !issuer_exp_tlv)
         return NULL;
-    
-    // Create RSA key from issuer PK
-    EMV_RSA_Key issuer_key = emv_rsa_create_key(pk->modulus, pk->mlen, pk->exp, pk->elen);
-    if (!issuer_key.openssl_key)
+
+    // Create RSA key from CA modulus
+    EMV_RSA_Key ca_key = emv_rsa_create_key(ca_pk->modulus, ca_pk->mlen, ca_pk->exp, ca_pk->elen);
+    if (!ca_key.openssl_key)
         return NULL;
-    
+
     size_t modulus_len = issuer_cert_tlv->len;
-    unsigned char *modulus = malloc(modulus_len);
+    unsigned char* modulus = malloc(modulus_len);
     if (!modulus) {
-        emv_rsa_free_key(&issuer_key);
+        emv_rsa_free_key(&ca_key);
         return NULL;
     }
-    
-    // Decrypt the certificate
-    if (!emv_rsa_verify(&issuer_key, issuer_cert_tlv->value, issuer_cert_tlv->len,
+
+    // Verify signature
+    if (!emv_rsa_verify(&ca_key, issuer_cert_tlv->value, issuer_cert_tlv->len,
         modulus, modulus_len)) {
         free(modulus);
-        emv_rsa_free_key(&issuer_key);
+        emv_rsa_free_key(&ca_key);
         return NULL;
     }
-    
-    // Check header/trailer
+
+    // Check format
     if (modulus[0] != 0x6A || modulus[modulus_len - 1] != 0xBC) {
         free(modulus);
-        emv_rsa_free_key(&issuer_key);
+        emv_rsa_free_key(&ca_key);
         return NULL;
     }
-    
-    // Determine hash algorithm from header
+
+    // Get hash algorithm
     unsigned char hash_algo = modulus[1];
     if (hash_algo != HASH_SHA_1 && hash_algo != HASH_SHA_256) {
         free(modulus);
-        emv_rsa_free_key(&issuer_key);
+        emv_rsa_free_key(&ca_key);
         return NULL;
     }
-    
-    size_t hash_len = (hash_algo == HASH_SHA_1) ? 20 : 32;
-    
+
     // Extract issuer data
-    unsigned char *issuer_data = modulus + 2;
+    size_t hash_len = (hash_algo == HASH_SHA_1) ? 20 : 32;
+    unsigned char* issuer_data = modulus + 2;
     size_t issuer_data_len = modulus_len - 2 - hash_len - 1;
-    
-    // Recover PK
-    struct emv_pk *issuer_pk = emv_pk_new(issuer_data_len, issuer_exp_tlv->len);
+
+    // Create issuer PK
+    struct emv_pk* issuer_pk = emv_pk_new(issuer_data_len - 1, issuer_exp_tlv->len);
     if (!issuer_pk) {
         free(modulus);
-        emv_rsa_free_key(&issuer_key);
+        emv_rsa_free_key(&ca_key);
         return NULL;
     }
-    
+
     // Copy data
-    memcpy(issuer_pk->rid, pk->rid, 5);
+    memcpy(issuer_pk->rid, ca_pk->rid, 5);
     issuer_pk->index = issuer_data[0];
     issuer_pk->hash_algo = hash_algo;
-    
+
     // Copy exponent
     memcpy(issuer_pk->exp, issuer_exp_tlv->value, issuer_exp_tlv->len);
-    
+
     // Copy modulus
     memcpy(issuer_pk->modulus, issuer_data + 1, issuer_data_len - 1);
-    
-    // Handle remainder if present
+
+    // Handle remainder
     if (issuer_rem_tlv && issuer_rem_tlv->len > 0) {
-        size_t rem_pos = issuer_data_len - 1;
-        if (rem_pos + issuer_rem_tlv->len > issuer_pk->mlen) {
-            emv_pk_free((struct emv_pk*) & issuer_pk);
-            free(modulus);
-            emv_rsa_free_key(&issuer_key);
-            return NULL;
-        }
-        
-        memcpy(issuer_pk->modulus + rem_pos, issuer_rem_tlv->value, issuer_rem_tlv->len);
+        memcpy(issuer_pk->modulus + issuer_data_len - 1,
+            issuer_rem_tlv->value, issuer_rem_tlv->len);
     }
-    
-    // Calculate hash and verify
+
+    // Calculate hash
     ByteBuffer hash;
     if (hash_algo == HASH_SHA_1)
         hash = emv_sha1_hash(issuer_pk->rid, 5);
     else
         hash = emv_sha256_hash(issuer_pk->rid, 5);
-    
+
     if (!hash.data) {
-        emv_pk_free((struct emv_pk*)&issuer_pk);
+        emv_pk_free(issuer_pk);
         free(modulus);
-        emv_rsa_free_key(&issuer_key);
+        emv_rsa_free_key(&ca_key);
         return NULL;
     }
-    
-    // Update hash with index and public key
+
+    // Verify hash
     emv_hash_update(&hash, &issuer_pk->index, 1);
     emv_hash_update(&hash, issuer_pk->modulus, issuer_pk->mlen);
     emv_hash_update(&hash, issuer_pk->exp, issuer_pk->elen);
-    
-    // Compare hash
-    unsigned char *cert_hash = modulus + modulus_len - hash_len - 1;
-    if (hash.length != hash_len || memcmp(hash.data, cert_hash, hash_len) != 0) {
+
+    unsigned char* cert_hash = modulus + modulus_len - hash_len - 1;
+    if (memcmp(hash.data, cert_hash, hash_len) != 0) {
         emv_free_buffer(&hash);
-        emv_pk_free((struct emv_pk*)issuer_pk);
+        emv_pk_free(issuer_pk);
         free(modulus);
-        emv_rsa_free_key(&issuer_key);
+        emv_rsa_free_key(&ca_key);
         return NULL;
     }
-    
+
     emv_free_buffer(&hash);
     free(modulus);
-    emv_rsa_free_key(&issuer_key);
-    
+    emv_rsa_free_key(&ca_key);
+
     return issuer_pk;
 }
 
@@ -297,77 +287,77 @@ struct emv_pk* emv_pki_perform_cda(const struct emv_pk* enc_pk, const struct tlv
     return NULL;
 }
 
-static bool emv_pki_verify_sig(const struct emv_pk *pk, const struct tlvdb *db,
-                     tlv_tag_t cert_tag, tlv_tag_t data_tag, tlv_tag_t data_dol_tag)
+bool emv_pki_verify_sig(const struct emv_pk* pk, const struct tlvdb* db,
+    tlv_tag_t cert_tag, tlv_tag_t data_tag, tlv_tag_t data_dol_tag)
 {
-    const struct tlv *cert_tlv = tlvdb_get(db, cert_tag, NULL);
-    const struct tlv *data_tlv = tlvdb_get(db, data_tag, NULL);
-    const struct tlv *dol_tlv = data_dol_tag ? tlvdb_get(db, data_dol_tag, NULL) : NULL;
-    
+    const struct tlv* cert_tlv = tlvdb_get(db, cert_tag, NULL);
+    const struct tlv* data_tlv = data_tag ? tlvdb_get(db, data_tag, NULL) : NULL;
+    const struct tlv* dol_tlv = data_dol_tag ? tlvdb_get(db, data_dol_tag, NULL) : NULL;
+
     if (!pk || !pk->modulus || !cert_tlv)
         return false;
-    
+
     EMV_RSA_Key key = emv_rsa_create_key(pk->modulus, pk->mlen, pk->exp, pk->elen);
     if (!key.openssl_key)
         return false;
-    
+
     size_t decrypted_len = cert_tlv->len;
-    unsigned char *decrypted = malloc(decrypted_len);
+    unsigned char* decrypted = malloc(decrypted_len);
     if (!decrypted) {
         emv_rsa_free_key(&key);
         return false;
     }
-    
-    // Verify the signature
+
+    // Verify signature
     if (!emv_rsa_verify(&key, cert_tlv->value, cert_tlv->len,
-                      decrypted, decrypted_len)) {
+        decrypted, decrypted_len)) {
         free(decrypted);
         emv_rsa_free_key(&key);
         return false;
     }
-    
-    // Check header/trailer
+
+    // Check format
     if (decrypted[0] != 0x6A || decrypted[decrypted_len - 1] != 0xBC) {
         free(decrypted);
         emv_rsa_free_key(&key);
         return false;
     }
-    
-    // Determine hash algorithm
+
+    // Get hash algorithm
     unsigned char hash_algo = decrypted[1];
     if (hash_algo != HASH_SHA_1 && hash_algo != HASH_SHA_256) {
         free(decrypted);
         emv_rsa_free_key(&key);
         return false;
     }
-    
+
     size_t hash_len = (hash_algo == HASH_SHA_1) ? 20 : 32;
-    
+
     // Create hash
     ByteBuffer hash;
     if (hash_algo == HASH_SHA_1)
         hash = emv_sha1_hash(decrypted + 2, decrypted_len - 2 - hash_len - 1);
     else
         hash = emv_sha256_hash(decrypted + 2, decrypted_len - 2 - hash_len - 1);
-    
+
     if (!hash.data) {
         free(decrypted);
         emv_rsa_free_key(&key);
         return false;
     }
-    
-    // Add DOL data if needed
-    if (data_tlv && dol_tlv)
+
+    // Add data if needed
+    if (data_tlv)
         emv_hash_update(&hash, data_tlv->value, data_tlv->len);
-    
-    // Compare hash
-    unsigned char *sig_hash = decrypted + decrypted_len - hash_len - 1;
-    bool result = (hash.length == hash_len && memcmp(hash.data, sig_hash, hash_len) == 0);
-    
+
+    // Verify hash
+    unsigned char* sig_hash = decrypted + decrypted_len - hash_len - 1;
+    bool result = (memcmp(hash.data, sig_hash, hash_len) == 0);
+
     emv_free_buffer(&hash);
     free(decrypted);
     emv_rsa_free_key(&key);
-    
+
     return result;
 }
 

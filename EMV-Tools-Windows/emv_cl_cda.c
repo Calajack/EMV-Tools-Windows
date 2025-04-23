@@ -1,3 +1,10 @@
+#ifdef _MSC_VER
+#pragma comment(lib, "libcrypto-emv.lib")
+#pragma comment(lib, "libcore.lib")
+#pragma comment(lib, "libscard.lib")
+#pragma comment(lib, "Winscard.lib")
+#endif
+
 // emv_cl_cda.c - EMV Contactless CDA verification tool
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,9 +21,12 @@
 #include "emv_defs.h"
 #include "utils_windows.h"
 #include "emv_pki_priv.h"
+#include "emv_operations.h"
+#include "emv_file_utils.h"
 
 // Crypto library includes
 #include "crypto_windows.h"
+#include "crypto_hash.h"
 #include "emv_pk.h"
 #include "emv_pki.h"
 
@@ -24,7 +34,6 @@
 #include "scard_common.h"
 #include "apdu.h"
 #include "emv_commands.h"
-#include "winscard_impl.c"
 
 static void print_hex(const unsigned char *data, size_t len)
 {

@@ -117,6 +117,22 @@ static ssize_t emv_pk_read_string(char *buf, char *str, size_t size) {
 	return (p - buf);
 }
 
+size_t emv_pk_write_bin(char* out, size_t outlen, const unsigned char* bin, size_t binlen)
+{
+	if (!out || !bin || outlen < binlen * 2)
+		return 0;
+
+	static const char hex[] = "0123456789abcdef";
+	size_t i, pos = 0;
+
+	for (i = 0; i < binlen; i++) {
+		out[pos++] = hex[(bin[i] >> 4) & 0xf];
+		out[pos++] = hex[bin[i] & 0xf];
+	}
+
+	return binlen * 2;
+}
+
 struct emv_pk *emv_pk_parse_pk(char *buf) {
     struct emv_pk *r = calloc(1, sizeof(*r));
     if (!r) return NULL;

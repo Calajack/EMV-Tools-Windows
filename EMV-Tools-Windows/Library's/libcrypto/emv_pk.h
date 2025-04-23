@@ -42,6 +42,7 @@ typedef struct emv_pk emv_pk_t;
     bool emv_pk_verify(const struct emv_pk* pk);
     struct emv_pk* emv_pk_new(size_t modlen, size_t explen);
     void emv_pk_free(struct emv_pk* pk);
+    struct emv_pk* emv_pk_get_ca_pk(const unsigned char* rid, unsigned char idx);
 
 #ifdef __cplusplus
     extern "C" {

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <windows.h>
 #include "scard_common.h"
+#include "crypto_hash.h"
 #include "emv_operations.h"
 #include "emv_file_utils.h"
 #include "emv_certificate_ops.h"

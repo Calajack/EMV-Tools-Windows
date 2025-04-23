@@ -30,10 +30,8 @@ struct apdu_response {
     uint16_t sw;      // Status word
 };
 
-// Function to free response memory
+// Function declarations
 void apdu_response_free(struct apdu_response *response);
-
-// Function to transmit APDU command
 struct apdu_response *sc_transmit_apdu(struct sc *scard, const struct apdu_cmd *cmd);
 
 #ifdef __cplusplus

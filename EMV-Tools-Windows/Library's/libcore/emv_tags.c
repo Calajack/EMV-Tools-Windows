@@ -336,3 +336,36 @@ void emv_tags_init(void) {
         tag_cache[idx].info = &info;
     }
 }
+
+// Add these functions if they're missing or fix them if they're duplicated
+const char* emv_tag_get_name(uint16_t tag) {
+    // Simple implementation that returns some known tag names
+    switch (tag) {
+    case 0x5A: return "Application Primary Account Number (PAN)";
+    case 0x5F24: return "Application Expiration Date";
+    case 0x5F20: return "Cardholder Name";
+    case 0x9F07: return "Application Usage Control";
+    case 0x82: return "Application Interchange Profile";
+    case 0x95: return "Terminal Verification Results";
+    case 0x9B: return "Transaction Status Information";
+    case 0x9F27: return "Cryptogram Information Data";
+        // Add more tags as needed
+    default: return "Unknown Tag";
+    }
+}
+
+const char* emv_tag_get_description(uint16_t tag) {
+    // Simple implementation that returns descriptions for known tags
+    switch (tag) {
+    case 0x5A: return "PAN identifies the card issuer and cardholder account";
+    case 0x5F24: return "Date after which card expires";
+    case 0x5F20: return "Name of the cardholder";
+    case 0x9F07: return "Controls usage of the application";
+    case 0x82: return "Indicates capabilities of the card";
+    case 0x95: return "Status of various terminal verification functions";
+    case 0x9B: return "Indicates the status of the transaction";
+    case 0x9F27: return "Indicates the type of cryptogram and details";
+        // Add more descriptions as needed
+    default: return "No description available";
+    }
+}

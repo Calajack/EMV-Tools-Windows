@@ -5,6 +5,10 @@
 #include <windows.h>
 #include <stdio.h>
 
+#ifndef SCARD_ATTR_VENDOR_IFD_SERIAL_TIMEOUT
+#define SCARD_ATTR_VENDOR_IFD_SERIAL_TIMEOUT 0x0A0004
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,6 +20,22 @@ extern "C" {
             return __rc; \
         } \
     } while(0)
+
+    typedef struct {
+        uint8_t atr[32];
+        size_t atr_len;
+        uint8_t responses[16][256];
+        size_t resp_lens[16];
+        size_t resp_count;
+        int dummy;
+    } SCardManualContext;
+
+    // Then modify the g_scard_ctx structure to use this type
+    static struct {
+        SCardMode mode;
+        SCardEmuContext emu;
+        SCardManualContext manual;
+    } g_scard_ctx;
 
     // Implementation for EMV-Tools_Win.cpp
     SCardContext* scard_establish(DWORD scope) {
@@ -219,16 +239,16 @@ extern "C" {
         SCardMode mode;
         SCardEmuContext emu;
         SCardManualContext manual;
-    } g_scard_ctx;
+    } g_scard_ctx_impl; // Renamed to avoid conflict
 
     int scard_set_mode(SCardMode mode) {
-        g_scard_ctx.mode = mode;
+        g_scard_ctx_impl.mode = mode;
         return SCARD_S_SUCCESS;
     }
 
     int scard_set_emu_callback(uint8_t(*cb)(const uint8_t*, size_t, uint8_t*, size_t*)) {
         if (!cb) return SCARD_E_INVALID_PARAMETER;
-        g_scard_ctx.emu.emulate_cb = cb;
+        g_scard_ctx_impl.emu.emulate_cb = cb;
         return SCARD_S_SUCCESS;
     }
 

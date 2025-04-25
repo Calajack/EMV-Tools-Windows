@@ -1,5 +1,8 @@
 #include "emv_pk.h"
+#include "crypto_hash.h"
 #include "crypto_windows.h"
+#include "config_windows.h"
+#include "utils_windows.h"
 #include "emv_file_utils.h"
 #include <openssl/rsa.h>
 #include <openssl/bn.h>

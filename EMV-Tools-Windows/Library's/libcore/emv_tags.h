@@ -36,6 +36,8 @@ extern "C" {
     const emv_tag_info_t* emv_tag_get_info(uint16_t tag);
     int emv_tag_is_constructed(uint16_t tag);
     void emv_tags_init(void);
+    const char* emv_tag_get_name(uint32_t tag);
+    const char* emv_tag_get_description(uint32_t tag);
 
     // External declarations
     extern const emv_tag_def_t tag_database[];

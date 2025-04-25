@@ -3,6 +3,14 @@
 #include <openssl/evp.h>
 #include <stdlib.h>
 
+#ifndef SHA_DIGEST_LENGTH
+#define SHA_DIGEST_LENGTH 20
+#endif
+
+#ifndef SHA256_DIGEST_LENGTH
+#define SHA256_DIGEST_LENGTH 32
+#endif
+
 // Crypto hash context
 struct crypto_hash {
     EVP_MD_CTX *md_ctx;

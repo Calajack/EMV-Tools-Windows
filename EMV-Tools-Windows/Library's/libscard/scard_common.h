@@ -1,125 +1,80 @@
-#ifndef SCARD_COMMON_H
-#define SCARD_COMMON_H
+#ifndef EMV_CRYPTO_WINDOWS_H
+#define EMV_CRYPTO_WINDOWS_H
 
-#include <windows.h>
-#include <winscard.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define MAX_READERS 10
-#define MAX_READERNAME 256
+    // Define hash algorithm constants (avoid conflicting with OpenSSL)
+#ifndef HASH_ALGORITHMS_DEFINED
+#define HASH_ALGORITHMS_DEFINED
+    enum crypto_algo_hash {
+        HASH_SHA_1 = 0,
+        HASH_SHA_256 = 1
+    };
 
-#define OMNIKEY_CTRL_LED     0x42
-#define OMNIKEY_LED_OFF      0x00
-#define OMNIKEY_LED_GREEN    0x01
-
-    // Define custom attribute code not present in standard winscard.h
-#define SCARD_ATTR_VENDOR_IFD_SERIAL_TIMEOUT 0x0A0004
-
-// Error codes (Windows-aligned)
-#define SCARD_SUCCESS 0
-#define SCARD_ERR_INVALID_PARAM 0x80100004
-#define SCARD_ERR_NO_SERVICE 0x8010001D
-
-// APDU constants
-#define APDU_MAX_LEN 256
-#define SW1SW2_OK 0x9000
-
-// Interface types
-    typedef enum {
-        SCARD_IFD_AUTO = 0,
-        SCARD_IFD_ICC,
-        SCARD_IFD_PICC,
-        SCARD_IFD_MANUAL
-    } SCardInterfaceType;
-
-    // Smart card operation modes
-    typedef enum {
-        SCARD_MODE_NORMAL = 0,
-        SCARD_MODE_EMULATE,
-        SCARD_MODE_MANUAL
-    } SCardMode;
-
-    // The sc struct that the application code expects
-#ifndef SC_STRUCT_DEFINED
-#define SC_STRUCT_DEFINED
-    typedef struct sc {
-        SCARDCONTEXT hContext;
-        SCARDHANDLE hCard;
-        DWORD dwActiveProtocol;
-    } sc;
+    enum crypto_algo_pk {
+        PK_RSA = 0
+    };
 #endif
 
-    // Emulator context
+    // Define public key algorithm constants
+    enum crypto_algo_pk {
+        PK_RSA = 0
+    };
+
+    // ByteBuffer structure for data handling
     typedef struct {
-        uint8_t(*emulate_cb)(const uint8_t* apdu, size_t apdu_len,
-            uint8_t* resp, size_t* resp_len);
-    } SCardEmuContext;
+        unsigned char* data;
+        size_t length;
+    } ByteBuffer;
 
-    // Manual context
+    // RSA key structure
     typedef struct {
-        uint8_t atr[32];
-        size_t atr_len;
-        uint8_t responses[16][256];
-        size_t resp_lens[16];
-        size_t resp_count;
-        int dummy;
-    } SCardManualContext;
+        void* openssl_key;  // EVP_PKEY* (opaque pointer to avoid OpenSSL header deps)
+        bool is_private;
+    } EMV_RSA_Key;
 
-    // Reader state
-    typedef struct {
-        char reader_name[256];
-        DWORD state;
-        DWORD protocol;
-    } SCardReaderState;
+    // Initialization
+    bool emv_crypto_init(void);
+    void emv_crypto_cleanup(void);
 
-    // Context structure
-    typedef struct {
-        SCARDCONTEXT hContext;
-        SCARDHANDLE hCard;
-        DWORD dwProtocol;
-        uint8_t atr[64];
-        size_t atr_len;
-    } SCardContext;
+    // RSA Functions
+    EMV_RSA_Key emv_rsa_create_key(const unsigned char* modulus, size_t mod_len,
+        const unsigned char* exponent, size_t exp_len);
+    int emv_rsa_sign(const EMV_RSA_Key* key,
+        const uint8_t* hash, size_t hash_len,
+        uint8_t* sig, size_t* sig_len);
+    bool emv_rsa_verify(const EMV_RSA_Key* key,
+        const unsigned char* hash, size_t hash_len,
+        const unsigned char* signature, size_t sig_len);
+    void emv_rsa_free_key(EMV_RSA_Key* key);
 
-    // Function declarations - avoid duplicate/conflicting declarations
+    // Hash Functions
+    ByteBuffer emv_sha1_hash(const unsigned char* data, size_t len);
+    ByteBuffer emv_sha256_hash(const unsigned char* data, size_t len);
+    void emv_hash_update(ByteBuffer* hash, const unsigned char* data, size_t len);
+    void emv_free_buffer(ByteBuffer* buf);
 
-    // Function for EMV-Tools_Win.cpp
-    SCardContext* scard_establish(DWORD scope);
+    // Certificate Operations
+    bool emv_verify_certificate(const EMV_RSA_Key* ca_key,
+        const unsigned char* cert, size_t cert_len,
+        unsigned char* recovered, size_t* recovered_len);
 
-    // Connect function for SCardContext
-    int scard_connect_ctx(SCardContext* ctx, const char* reader, DWORD share_mode);
-
-    // Omnikey LED control
-    int scard_omnikey_set_led(SCardContext* ctx, unsigned char state);
-
-    // Simplified PC/SC functions used by tool programs
-    LONG scard_establish_context(SCARDCONTEXT* ctx);
-    void scard_release_context(SCARDCONTEXT ctx);
-    const char* pcsc_stringify_error(LONG code);
-    LONG scard_connect(SCARDCONTEXT ctx, const char* reader, SCARDHANDLE* card, DWORD* protocol);
-    void scard_disconnect(SCARDHANDLE card, DWORD disposition);
-    bool scard_list_readers(SCARDCONTEXT hContext, char readers[][MAX_READERNAME], DWORD* reader_count, size_t max_readers, size_t max_len);
-
-    // SCardContext functions
-    int scard_disconnect_ctx(SCardContext* ctx);
-    int scard_transmit(SCardContext* ctx, const uint8_t* apdu, size_t apdu_len, uint8_t* resp, size_t* resp_len);
-    int scard_transmit_ex(SCardContext* ctx, const uint8_t* apdu, size_t apdu_len, uint8_t* resp, size_t* resp_len, DWORD timeout_ms);
-    void scard_free(SCardContext* ctx);
-
-    // EMU mode functions
-    int scard_set_mode(SCardMode mode);
-    int scard_set_emu_callback(uint8_t(*cb)(const uint8_t*, size_t, uint8_t*, size_t*));
-
-    // Custom timeout function
-    int SCardSetTimeout(SCARDHANDLE hCard, DWORD dwTimeout);
+    // Key Import/Export
+    bool emv_export_key(const EMV_RSA_Key* key,
+        unsigned char** modulus, size_t* mod_len,
+        unsigned char** exponent, size_t* exp_len);
+    bool emv_import_key(const unsigned char* modulus, size_t mod_len,
+        const unsigned char* exponent, size_t exp_len,
+        EMV_RSA_Key* key);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* SCARD_COMMON_H */
+#endif // EMV_CRYPTO_WINDOWS_H

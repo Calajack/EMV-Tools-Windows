@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-    // Define hash algorithm constants (avoid conflicting with OpenSSL)
+    // Define hash algorithm constants (avoid conflicting with OpenSSL) 
 #ifndef HASH_ALGORITHMS_DEFINED
 #define HASH_ALGORITHMS_DEFINED
     enum crypto_algo_hash {
@@ -21,11 +21,6 @@ extern "C" {
         PK_RSA = 0
     };
 #endif
-
-    // Define public key algorithm constants
-    enum crypto_algo_pk {
-        PK_RSA = 0
-    };
 
     // ByteBuffer structure for data handling
     typedef struct {

@@ -2,10 +2,39 @@
 #include "emv_card.h"
 #include "emv_commands.h"
 #include "scard_common.h"
+#include "emv_communications.h"
 #include "tlv.h"
+#define _WIN32_WINNT 0x0600 // Target Windows Vista or later
+#define OPENSSL_API_COMPAT 0x10100000L
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <winscard.h>
+#include <openssl/evp.h>
+
+int get_card_atr(SCARDHANDLE hCard, BYTE* atr, DWORD* atr_len) {
+    DWORD dwState, dwProtocol;
+    LPBYTE pbAtr = NULL;
+    DWORD dwAtrLen = SCARD_AUTOALLOCATE;
+
+    LONG lReturn = SCardStatus(hCard, NULL, NULL, &dwState, &dwProtocol,
+        (LPBYTE)&pbAtr, &dwAtrLen);
+    if (lReturn != SCARD_S_SUCCESS) {
+        return -1;
+    }
+
+    if (*atr_len < dwAtrLen) {
+        SCardFreeMemory(NULL, pbAtr);
+        return -2; // Buffer too small
+    }
+
+    memcpy(atr, pbAtr, dwAtrLen);
+    *atr_len = dwAtrLen;
+    SCardFreeMemory(NULL, pbAtr);
+    return 0;
+}
 
 // Initialize the EMV card subsystem
 bool emv_card_init() {
@@ -20,7 +49,7 @@ int emv_card_connect(EMV_Card *card, const char *reader_name) {
 
     // Initialize card structure
     memset(card, 0, sizeof(EMV_Card));
-    strncpy(card->reader_name, reader_name, sizeof(card->reader_name) - 1);
+    strncpy(card->reader_name, reader_name, sizeof(card->reader_name) - 1); 
     
     // Establish PC/SC context
     SCARDCONTEXT hContext;

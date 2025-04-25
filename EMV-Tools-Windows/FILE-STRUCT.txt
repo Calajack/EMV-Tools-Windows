@@ -3,16 +3,30 @@ EMV-Tools-Windows/
 ├── EMV-Tools-Windows/
 │   ├── EMV-Tools-Windows/ - All tlog files
 │   │    └── x64/Debug
+│   │         ├── output  (folder-empty)
+│   │         ├── EMV_CL_CDA.exe
+│   │         ├── EMV_CL_CDA.pdb
+│   │         ├── EMV_DDA.exe
+│   │         ├── EMV_DDA.pdb
+│   │         ├── EMV_DUMP.pdb
 │   │         ├── EMV_SDA.pdb
+│   │         ├── EMV-Tools_Win.exe
+│   │         ├── EMV-Tools_Win.exp
+│   │         ├── EMV-Tools_Win.lib
+│   │         ├── EMV-Tools_Win.pdb
 │   │         ├── libcore.idb
 │   │         ├── libcore.lib
 │   │         ├── libcore.pdb
-│   │         ├── libcrypto.idb
-│   │         ├── libcrypto.lib
-│   │         ├── libcrypto.pdb
+│   │         ├── libcrypto.idb - From old naming of library
+│   │         ├── libcrypto.lib - From old naming of library
+│   │         ├── libcrypto.pdb - From old naming of library
+│   │         ├── libcrypto-emv.idb
+│   │         ├── libcrypto-emv.lib
+│   │         ├── libcrypto-emv.pdb
 │   │         ├── libscard.idb
 │   │         ├── libscard.lib
-│   │         └── libscard.pdb
+│   │         ├── libscard.pdb
+│   │         └── Run_EMV_DUMP.bat
 │   ├── EMV-Tools-Windows.cpp
 │   ├── EMV-Tools-Windows.sln
 │   ├── EMV-Tools-Windows.vcxproj
@@ -54,6 +68,10 @@ EMV-Tools-Windows/
 │    │    ├──  All .c & .h files for libcrypto
 │    └── libscard/
 │         └──  All .c & .h files for libscard
+├── Static-lib/------------------------------------------moved to here, as debug folder caused errors in library directories
+│    ├── libcore.lib
+│    ├── libcrypto-emv.lib
+│    └── libscard.lib
 ├── Tools/
 │    ├── EMV_CAP/
 │    │    ├── x64---------------------------------- EMV_CAP.exe.recipe / EMV_CAP - 3D Object ETC
